@@ -97,6 +97,16 @@ def postProcess():
     fraction_NH3=df[" Mole_fraction_NH3_()"]
     print(fraction_NO,fraction_NH3)
 
-def generateChemInput():
+def generateChemInput(A1,B1,E1,A2,B2,E2):
+    input_stream=("""ELEMENTS O H N C END
+SPECIES NH3 NO O2 N2 H2O END
+REACTIONS
+NH3+NO+0.25O2=>N2+1.5H2O {0:g}  {1:g}  {2:g}
+NH3+1.25O2=>NO+1.5H2O  {3:g} {4:g} {5:g}
+END
+    """.format(A1,B1,E1,A2,B2,E2) )
+    with open("ChemInput_OverallReaction.inp",'w') as stream:
+        stream.write(input_stream)
+
 
 

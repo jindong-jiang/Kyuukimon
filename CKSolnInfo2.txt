@@ -1,4 +1,4 @@
-1 1 1 102 1 0 0 0 1 65 0 0 0 457 0 1 79 74 256 256 0 
+1 1 1 102 1 0 0 0 1 5 0 0 0 2 0 1 19 14 256 256 0 
 time (s) 2 0 0
 volume (cm3) 1 0 0
 plug_flow_residence_time (s) 1 0 0
@@ -13,140 +13,20 @@ heat_loss_rate (erg/cm-s) 1 0 0
 temperature (K) 1 0 0
 mass (g) 1 0 0
 pressure (dyne/cm2) 1 0 0
-mass_fraction_NH () 1 0 3
-mass_fraction_N2O () 1 0 3
 mass_fraction_NH3 () 1 0 3
-mass_fraction_NNH () 1 0 3
-mass_fraction_HNO () 1 0 3
-mass_fraction_H2NO () 1 0 3
-mass_fraction_HNOH () 1 0 3
-mass_fraction_N () 1 0 3
-mass_fraction_N2H2 () 1 0 3
-mass_fraction_NO3 () 1 0 3
-mass_fraction_CN () 1 0 3
-mass_fraction_HCN () 1 0 3
-mass_fraction_HNCO () 1 0 3
-mass_fraction_HOCN () 1 0 3
-mass_fraction_HCNO () 1 0 3
-mass_fraction_NCO () 1 0 3
-mass_fraction_C2N2 () 1 0 3
-mass_fraction_NCN () 1 0 3
-mass_fraction_H2CN () 1 0 3
-mass_fraction_CO2 () 1 0 3
-mass_fraction_O2 () 1 0 3
-mass_fraction_H2O () 1 0 3
-mass_fraction_N2 () 1 0 3
-mass_fraction_AR () 1 0 3
-mass_fraction_OH () 1 0 3
-mass_fraction_O () 1 0 3
-mass_fraction_H () 1 0 3
-mass_fraction_HO2 () 1 0 3
-mass_fraction_H2O2 () 1 0 3
-mass_fraction_CO () 1 0 3
-mass_fraction_CH2O () 1 0 3
-mass_fraction_HCO () 1 0 3
-mass_fraction_CH3 () 1 0 3
-mass_fraction_CH4 () 1 0 3
-mass_fraction_CH2(S) () 1 0 3
-mass_fraction_CH2OH () 1 0 3
-mass_fraction_CH3O () 1 0 3
-mass_fraction_CH2 () 1 0 3
-mass_fraction_CH () 1 0 3
-mass_fraction_C () 1 0 3
-mass_fraction_CH3OH () 1 0 3
-mass_fraction_C2H6 () 1 0 3
-mass_fraction_C2H4 () 1 0 3
-mass_fraction_C2H5 () 1 0 3
-mass_fraction_C2H3 () 1 0 3
-mass_fraction_C2H2 () 1 0 3
-mass_fraction_H2 () 1 0 3
-mass_fraction_C2 () 1 0 3
-mass_fraction_C2H () 1 0 3
-mass_fraction_CH3HCO () 1 0 3
-mass_fraction_CH2HCO () 1 0 3
-mass_fraction_C2H5CHO () 1 0 3
-mass_fraction_C2H2OH () 1 0 3
-mass_fraction_CH3CO () 1 0 3
-mass_fraction_CH2CO () 1 0 3
-mass_fraction_HCCOH () 1 0 3
-mass_fraction_OCHCHO () 1 0 3
-mass_fraction_HCCO () 1 0 3
-mass_fraction_C2O () 1 0 3
-mass_fraction_NO2 () 1 0 3
 mass_fraction_NO () 1 0 3
-mass_fraction_NH2 () 1 0 3
-mass_fraction_HONO () 1 0 3
-mass_fraction_CH2CN () 1 0 3
-mass_fraction_CH3CN () 1 0 3
+mass_fraction_O2 () 1 0 3
+mass_fraction_N2 () 1 0 3
+mass_fraction_H2O () 1 0 3
 residence_time (s) 1 0 0
 inlet_flow_rate_of_INLET1 (g/s) 1 0 0
 inlet_equivalence_ratio_of_INLET1 () 1 0 0
 inlet_temperature_of_INLET1 (K) 1 0 0
-inlet_mole_fraction_NH_of_INLET1 () 1 0 0
-inlet_mole_fraction_N2O_of_INLET1 () 1 0 0
 inlet_mole_fraction_NH3_of_INLET1 () 1 0 0
-inlet_mole_fraction_NNH_of_INLET1 () 1 0 0
-inlet_mole_fraction_HNO_of_INLET1 () 1 0 0
-inlet_mole_fraction_H2NO_of_INLET1 () 1 0 0
-inlet_mole_fraction_HNOH_of_INLET1 () 1 0 0
-inlet_mole_fraction_N_of_INLET1 () 1 0 0
-inlet_mole_fraction_N2H2_of_INLET1 () 1 0 0
-inlet_mole_fraction_NO3_of_INLET1 () 1 0 0
-inlet_mole_fraction_CN_of_INLET1 () 1 0 0
-inlet_mole_fraction_HCN_of_INLET1 () 1 0 0
-inlet_mole_fraction_HNCO_of_INLET1 () 1 0 0
-inlet_mole_fraction_HOCN_of_INLET1 () 1 0 0
-inlet_mole_fraction_HCNO_of_INLET1 () 1 0 0
-inlet_mole_fraction_NCO_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2N2_of_INLET1 () 1 0 0
-inlet_mole_fraction_NCN_of_INLET1 () 1 0 0
-inlet_mole_fraction_H2CN_of_INLET1 () 1 0 0
-inlet_mole_fraction_CO2_of_INLET1 () 1 0 0
-inlet_mole_fraction_O2_of_INLET1 () 1 0 0
-inlet_mole_fraction_H2O_of_INLET1 () 1 0 0
-inlet_mole_fraction_N2_of_INLET1 () 1 0 0
-inlet_mole_fraction_AR_of_INLET1 () 1 0 0
-inlet_mole_fraction_OH_of_INLET1 () 1 0 0
-inlet_mole_fraction_O_of_INLET1 () 1 0 0
-inlet_mole_fraction_H_of_INLET1 () 1 0 0
-inlet_mole_fraction_HO2_of_INLET1 () 1 0 0
-inlet_mole_fraction_H2O2_of_INLET1 () 1 0 0
-inlet_mole_fraction_CO_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH2O_of_INLET1 () 1 0 0
-inlet_mole_fraction_HCO_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH3_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH4_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH2(S)_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH2OH_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH3O_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH2_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH_of_INLET1 () 1 0 0
-inlet_mole_fraction_C_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH3OH_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H6_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H4_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H5_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H3_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H2_of_INLET1 () 1 0 0
-inlet_mole_fraction_H2_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH3HCO_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH2HCO_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H5CHO_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2H2OH_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH3CO_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH2CO_of_INLET1 () 1 0 0
-inlet_mole_fraction_HCCOH_of_INLET1 () 1 0 0
-inlet_mole_fraction_OCHCHO_of_INLET1 () 1 0 0
-inlet_mole_fraction_HCCO_of_INLET1 () 1 0 0
-inlet_mole_fraction_C2O_of_INLET1 () 1 0 0
-inlet_mole_fraction_NO2_of_INLET1 () 1 0 0
 inlet_mole_fraction_NO_of_INLET1 () 1 0 0
-inlet_mole_fraction_NH2_of_INLET1 () 1 0 0
-inlet_mole_fraction_HONO_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH2CN_of_INLET1 () 1 0 0
-inlet_mole_fraction_CH3CN_of_INLET1 () 1 0 0
+inlet_mole_fraction_O2_of_INLET1 () 1 0 0
+inlet_mole_fraction_N2_of_INLET1 () 1 0 0
+inlet_mole_fraction_H2O_of_INLET1 () 1 0 0
 area (cm2) 1 0 0
 cycle_time (s) 1 0 0
 heat_transfer_coefficient (erg/cm2-K-s) 1 0 0
@@ -168,66 +48,6 @@ surface_material_area_fraction () 1 0 0
 1 0 0 
 1 0 0 
 1 0 0 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
-1 0 1 
 1 0 1 
 1 0 1 
 1 0 1 
