@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
+import os
 
 
 
 def gererateInputFile( reactants, temperature, pressure,velocity,viscosity,
-                      reactorDiameter,endPosition,startPosition ,endTime,
+                      reactorDiameter,endPosition,startPosition ,endTime,tempFile,
                       Continuations=False, typeContinuation = None, Tlist = [], Plist = [],
                       variableVolume=False, variableVolumeProfile = None,
                       solverTimeStepProfile = None):
@@ -85,7 +86,7 @@ PRES {1:g}""".format(typeContinuation,numpy.array(Plist)[i]/1.01325))
 
     input_stream+=('\nEND')
 
-    with open("test.inp", 'w') as stream:
+    with open(tempFile, 'w') as stream:
             stream.write(input_stream)
 
     return input_stream
@@ -97,7 +98,7 @@ def postProcess():
     fraction_NH3=df[" Mole_fraction_NH3_()"]
     print(fraction_NO,fraction_NH3)
 
-def generateChemInput(A1,B1,E1,A2,B2,E2):
+def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile):
     input_stream=("""ELEMENTS O H N C END
 SPECIES NH3 NO O2 N2 H2O END
 REACTIONS
@@ -105,8 +106,23 @@ NH3+NO+0.25O2=>N2+1.5H2O {0:g}  {1:g}  {2:g}
 NH3+1.25O2=>NO+1.5H2O  {3:g} {4:g} {5:g}
 END
     """.format(A1,B1,E1,A2,B2,E2) )
-    with open("ChemInput_OverallReaction.inp",'w') as stream:
+    with open(tempFile,'w') as stream:
         stream.write(input_stream)
 
 
+def generateBatFile(chemicalMecanismInp,ChemkinParametreInp,tempDir,tempFile):
+    input_stream=(r"""
+CALL "C:\Program Files (x86)\Reaction\chemkin15083_pc\bin\run_chemkin_env_setup.bat"
+cd {2}
+COPY "G:\SNCR\SNCR\chem_add_ITL.inp"
+COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\therm.dat"
+COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\tran.dat"
+CALL "C:\Program Files (x86)\Reaction\chemkin15083_pc\bin\chem.exe" -i {0} -o test_python.out -d therm.dat
 
+COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\chemkindata.dtd"
+SET CHEMKIN_MODE=Pro
+CKReactorGenericClosed -i {1} -o chemkin.out
+GetSolution
+CKSolnTranspose""".format(chemicalMecanismInp,ChemkinParametreInp,tempDir))
+    with open(os.path.join(tempDir,tempFile),'w') as stream:
+        stream.write(input_stream)

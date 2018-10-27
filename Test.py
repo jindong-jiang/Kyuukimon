@@ -1,4 +1,14 @@
 import Python_Chemkin_ToolBox as PyChemTB
+import os
+import subprocess
+
+
+currentDir = os.path.dirname(__file__)
+tempDir = os.path.join(currentDir, 'tempDeNOx')
+
+if not os.path.exists(tempDir):
+    os.makedirs(tempDir)
+
 
 PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                              #('CO',0.0),
@@ -17,7 +27,7 @@ PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                   endPosition=45.0,
                                   startPosition=0.0 ,
                                   endTime = 0.05 ,   # End Time (sec)
-
+                                  tempFile=os.path.join(tempDir,"test.inp"),
                                   #Continuations = True,             # Continuations
                                   #typeContinuation = 'NEWRUN',      # Type of continuation NEWRUN or CNTN
                                   #Tlist=[1000.,1200.],              # Temperature (K) list of continuations
@@ -31,4 +41,8 @@ PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
 
 #PyChemTB.postProcess()
 
-PyChemTB.generateChemInput(3.56e20,0,1.03e4,1.48e10,0,5.95e3)
+PyChemTB.generateChemInput(3.56e20,0,1.03e4,1.48e10,0,5.95e3,
+                           tempFile=os.path.join(tempDir,"ChemInput_OverallReaction.inp"))
+
+PyChemTB.generateBatFile('ChemInput_OverallReaction.inp','test.inp',tempDir,"DeNOxExp.bat")
+process=subprocess.Popen(os.path.join(tempDir,"DeNOxExp.bat"), cwd=tempDir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
