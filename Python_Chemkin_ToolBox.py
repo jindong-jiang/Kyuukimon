@@ -42,7 +42,7 @@ VEL {0:g} ! Axial Velocity (cm/sec)'
 VIS {1:g} ! ! Mixture Viscosity (g/cm-sec)'
 DIAM {2:g}  ! Diameter (cm)
 XEND {3:g}   ! Ending Axial Position (cm)
-XSTR {4:g}  ! Starting Axial Position (cm)'''.format(velocity,viscosity,reactorDiameter,endPosition,startPosition))
+XSTR {4:g}  ! Starting Axial Position (cm) \n'''.format(velocity,viscosity,reactorDiameter,endPosition,startPosition))
 
     for reac , conc in reactants:
         input_stream+=('REAC {0} {1:g} ! Reactant Fraction (mole fraction) \n'.format(reac,conc))

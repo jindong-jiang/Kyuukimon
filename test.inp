@@ -10,11 +10,11 @@ VEL 75 ! Axial Velocity (cm/sec)'
 VIS 0 ! ! Mixture Viscosity (g/cm-sec)'
 DIAM 3.2  ! Diameter (cm)
 XEND 45   ! Ending Axial Position (cm)
-XSTR 0  ! Starting Axial Position (cm)REAC H2 0 ! Reactant Fraction (mole fraction) 
-REAC N2 0.7898 ! Reactant Fraction (mole fraction) 
-REAC NH3 0 ! Reactant Fraction (mole fraction) 
-REAC NO 0.0002 ! Reactant Fraction (mole fraction) 
-REAC O2 0.6 ! Reactant Fraction (mole fraction) 
+XSTR 0  ! Starting Axial Position (cm) 
+REAC N2 0.3 ! Reactant Fraction (mole fraction) 
+REAC NH3 0.2 ! Reactant Fraction (mole fraction) 
+REAC NO 0.2 ! Reactant Fraction (mole fraction) 
+REAC O2 0.3 ! Reactant Fraction (mole fraction) 
 
 ADAP   ! Save Additional Adaptive Points
 ASTEPS 20   ! Use Solver Integration Steps

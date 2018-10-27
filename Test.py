@@ -3,11 +3,11 @@ import Python_Chemkin_ToolBox as PyChemTB
 PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                              #('CO',0.0),
                                              #('CO2',0.15),
-                                             ('H2',0.0),
-                                             ('N2',0.7898),
-                                             ('NH3',0.0),
-                                             ('NO',0.0002),
-                                             ('O2',0.6),],     # Reactant (mole fraction)
+                                             #('H2',0.2),
+                                             ('N2',0.3),
+                                             ('NH3',0.2),
+                                             ('NO',0.2),
+                                             ('O2',0.3),],     # Reactant (mole fraction)
 
                                   temperature = 1100, # Temperature(K)
                                   pressure = 1 ,   # Pressure (bar)
