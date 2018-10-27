@@ -31,4 +31,4 @@ PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
 
 #PyChemTB.postProcess()
 
-PyChemTB.generateChemInput(3.56e49,0,1.03e6,1.48e24,0,5.95e5)
+PyChemTB.generateChemInput(3.56e20,0,1.03e4,1.48e10,0,5.95e3)
