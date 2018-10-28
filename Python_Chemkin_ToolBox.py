@@ -91,12 +91,14 @@ PRES {1:g}""".format(typeContinuation,numpy.array(Plist)[i]/1.01325))
 
     return input_stream
 
-def postProcess():
-    df=pd.read_csv(r'C:\Users\dell\Desktop\PythonChemkin\CKSoln_solution_no_1_1.csv')
-
-    fraction_NO=df[" Mole_fraction_NO_()"]
-    fraction_NH3=df[" Mole_fraction_NH3_()"]
-    print(fraction_NO,fraction_NH3)
+def postProcess(resultFile):
+    try:
+        df=pd.read_csv(resultFile)
+        fraction_NO=df[" Mole_fraction_NO_()"]
+        fraction_NH3=df[" Mole_fraction_NH3_()"]
+        return fraction_NO,fraction_NH3
+    except:
+        print("No result data exists")
 
 def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile):
     input_stream=("""ELEMENTS O H N C END

@@ -1,13 +1,16 @@
 import Python_Chemkin_ToolBox as PyChemTB
 import os
 import subprocess
+import shutil
 
 
 currentDir = os.path.dirname(__file__)
 tempDir = os.path.join(currentDir, 'tempDeNOx')
 
-if not os.path.exists(tempDir):
-    os.makedirs(tempDir)
+if os.path.exists(tempDir):
+    shutil.rmtree(tempDir)
+
+os.makedirs(tempDir)
 
 
 PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
@@ -39,10 +42,25 @@ PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                   #solverTimeStepProfile = solTimeStepFile # Solver time profile (sec))
                             )
 
-#PyChemTB.postProcess()
+
 
 PyChemTB.generateChemInput(3.56e20,0,1.03e4,1.48e10,0,5.95e3,
                            tempFile=os.path.join(tempDir,"ChemInput_OverallReaction.inp"))
 
 PyChemTB.generateBatFile('ChemInput_OverallReaction.inp','test.inp',tempDir,"DeNOxExp.bat")
 process=subprocess.Popen(os.path.join(tempDir,"DeNOxExp.bat"), cwd=tempDir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+stdout, stderr = process.communicate()
+if process.returncode != 0:
+    print(stdout)
+    print(stderr)
+    quit()
+
+if os.path.exists(os.path.join(tempDir,"CKSoln_solution_no_1.csv")):
+    resultFileChemkin=os.path.join(tempDir,"CKSoln_solution_no_1.csv");
+if os.path.exists(os.path.join(tempDir,"CKSoln_solution_no_1.csv")):
+    resultFileChemkin=os.path.join(tempDir,"CKSoln_solution_no_1.csv");
+
+
+fraction_NO,fraction_NH3=PyChemTB.postProcess(resultFile=resultFileChemkin)
+print(fraction_NO,fraction_NH3)
+
