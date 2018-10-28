@@ -96,8 +96,8 @@ def postProcess(resultFile):
         df=pd.read_csv(resultFile)
         fraction_NO=df[" Mole_fraction_NO_()"]
         fraction_NH3=df[" Mole_fraction_NH3_()"]
-       # residentTime=df[]
-        return fraction_NO,fraction_NH3
+        residentTime=df[" Plug_flow_residence_time_(sec)"]
+        return fraction_NO,fraction_NH3,residentTime
     except:
         print("No result data exists")
 

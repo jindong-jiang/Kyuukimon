@@ -29,18 +29,18 @@ def getMolesFractions(machanismInp,expParameterInp):
         resultFileChemkin=os.path.join(tempDir,"CKSoln_solution_no_1.csv")
     if os.path.exists(os.path.join(tempDir,"CKSoln_solution_no_1_1.csv")):
         resultFileChemkin=os.path.join(tempDir,"CKSoln_solution_no_1_1.csv")
-    fraction_NO,fraction_NH3=PyChemTB.postProcess(resultFile=resultFileChemkin)
-    return fraction_NO,fraction_NH3
+    fraction_NO,fraction_NH3,residentTime=PyChemTB.postProcess(resultFile=resultFileChemkin)
+    return fraction_NO,fraction_NH3,residentTime
 
 
 PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                              #('CO',0.0),
                                              #('CO2',0.15),
                                              #('H2',0.2),
-                                             ('N2',0.7),
+                                             ('N2',0.7898),
                                              ('NH3',0.02),
-                                             ('NO',0.02),
-                                             ('O2',0.3),],     # Reactant (mole fraction)
+                                             ('NO',0.0002),
+                                             ('O2',0.06),],     # Reactant (mole fraction)
 
                                   temperature = 1100, # Temperature(K)
                                   pressure = 1 ,   # Pressure (bar)
@@ -64,16 +64,26 @@ PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
 
 
 
-PyChemTB.generateChemInput(3.56e20,0,1.03e4,1.48e10,0,5.95e3,
+PyChemTB.generateChemInput(#3.56e20,0,1.03e4,1.48e10,0,5.95e3,
+                           2e10,0,1.03e20,1e15,0,5.95e4,
                            tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
 
 
 
-fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction=getMolesFractions(
-                                                os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
-                                                os.path.join(currentDir, "test.inp"))
-fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction=getMolesFractions(
+
+fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction,residentTimeDetail=getMolesFractions(
                                                 "G:\SNCR\SNCR\chem_add_ITL.inp",
                                                 os.path.join(currentDir, "test.inp"))
+fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
+                                                os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
+                                                os.path.join(currentDir, "test.inp"))
 
-plt.plot(fraction_NO_Overall_Reaction)
+plt.plot(residentTimeOverall,fraction_NO_Overall_Reaction,'--',
+         residentTimeDetail,fraction_NO_Detail_Reaction,'-.',
+         residentTimeOverall,fraction_NH3_Overall_Reaction,'v',
+         residentTimeDetail,fraction_NH3_Detail_Reaction,'^',
+         )
+plt.show()
+plt.xlabel('ResidentTime',fontsize='large')
+plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+
