@@ -23,7 +23,7 @@ RTIME ON   ! Turn on Residence Time Calculation""")
     input_stream+=("""
 !Surface_Temperature   ! Surface Temperature Same as Gas Temperature\n""")
 
-    input_stream+=('PRES {0:g}   ! Pressure (atm)\n'.format(pressure/1.01325))
+    input_stream+=('PRES {0:g}   ! Pressure (atm)\n'.format(pressure))
     input_stream+=('QLOS 0.0   ! Heat Loss (cal/sec)\n')
     input_stream+=('TEMP {0:g}   ! Temperature (K)'.format(temperature))
 
@@ -96,6 +96,7 @@ def postProcess(resultFile):
         df=pd.read_csv(resultFile)
         fraction_NO=df[" Mole_fraction_NO_()"]
         fraction_NH3=df[" Mole_fraction_NH3_()"]
+       # residentTime=df[]
         return fraction_NO,fraction_NH3
     except:
         print("No result data exists")
@@ -116,7 +117,7 @@ def generateBatFile(chemicalMecanismInp,ChemkinParametreInp,tempDir,tempFile):
     input_stream=(r"""
 CALL "C:\Program Files (x86)\Reaction\chemkin15083_pc\bin\run_chemkin_env_setup.bat"
 cd {2}
-COPY "G:\SNCR\SNCR\chem_add_ITL.inp"
+
 COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\therm.dat"
 COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\tran.dat"
 CALL "C:\Program Files (x86)\Reaction\chemkin15083_pc\bin\chem.exe" -i {0} -o test_python.out -d therm.dat

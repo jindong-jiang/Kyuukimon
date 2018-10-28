@@ -3,7 +3,7 @@ MOMEN ON   ! Turn on Momentum Equation
 PLUG   ! Plug Flow Reactor
 RTIME ON   ! Turn on Residence Time Calculation
 !Surface_Temperature   ! Surface Temperature Same as Gas Temperature
-PRES 0.986923   ! Pressure (atm)
+PRES 1   ! Pressure (atm)
 QLOS 0.0   ! Heat Loss (cal/sec)
 TEMP 1100   ! Temperature (K)
 VEL 75 ! Axial Velocity (cm/sec)'
@@ -11,9 +11,9 @@ VIS 0 ! ! Mixture Viscosity (g/cm-sec)'
 DIAM 3.2  ! Diameter (cm)
 XEND 45   ! Ending Axial Position (cm)
 XSTR 0  ! Starting Axial Position (cm) 
-REAC N2 0.3 ! Reactant Fraction (mole fraction) 
-REAC NH3 0.2 ! Reactant Fraction (mole fraction) 
-REAC NO 0.2 ! Reactant Fraction (mole fraction) 
+REAC N2 0.7 ! Reactant Fraction (mole fraction) 
+REAC NH3 0.02 ! Reactant Fraction (mole fraction) 
+REAC NO 0.02 ! Reactant Fraction (mole fraction) 
 REAC O2 0.3 ! Reactant Fraction (mole fraction) 
 
 ADAP   ! Save Additional Adaptive Points

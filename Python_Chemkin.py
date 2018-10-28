@@ -6,7 +6,6 @@ import os
 
 
 
-gererateInputFile
 
 scriptFile = os.path.join(r'C:\Users\dell\Desktop\PythonChemkin', 'ChemkinTest.bat')
 process = subprocess.Popen( scriptFile, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
