@@ -53,7 +53,7 @@ XSTR {4:g}  ! Starting Axial Position (cm) \n'''.format(velocity,viscosity,react
     input_stream+=("""
 ADAP   ! Save Additional Adaptive Points
 ASTEPS 20   ! Use Solver Integration Steps
-ATLS 1.0E-6   ! Sensitivity Absolute Tolerance
+ATLS 1.0E-7   ! Sensitivity Absolute Tolerance
 ATOL 1.0E-10   ! Absolute Tolerance
 RTLS 1.0E-7   ! Sensitivity Relative Tolerance
 RTOL 1.0E-8   ! Relative Tolerance
@@ -103,7 +103,7 @@ def postProcess(resultFile):
 
 def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile):
     input_stream=("""ELEMENTS O H N C END
-SPECIES NH3 NO O2 N2 H2O END
+SPECIES NH3 NO O2 N2 H2O CO2 END
 REACTIONS
 NH3+NO+0.25O2=>N2+1.5H2O {0:g}  {1:g}  {2:g}
 NH3+1.25O2=>NO+1.5H2O  {3:g} {4:g} {5:g}
