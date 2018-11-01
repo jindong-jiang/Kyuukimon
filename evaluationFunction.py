@@ -34,7 +34,7 @@ def getMolesFractions(machanismInp,expParameterInp):
     return fraction_NO,fraction_NH3,residentTime
 
 
-def difference_Overall_Detail(Coefficient):
+def difference_Overall_Detail(Coefficient,draw=False):
 
     PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
                                Coefficient[0],Coefficient[1],Coefficient[2],Coefficient[3],Coefficient[4],Coefficient[5],
@@ -66,24 +66,24 @@ def difference_Overall_Detail(Coefficient):
 
     diff2_NO = ((comparationList_NO_Detail-comparationList_NO_Overall)/fraction_NO_Overall_Reaction[0])**2
     diff2_NH3 = ((comparationList_NH3_Detail-comparationList_NH3_Overall)/fraction_NH3_Overall_Reaction[0])**2
+
+    if(draw):
+        plt.figure(1)
+        plt.plot(residentTimeOverall,fraction_NO_Overall_Reaction/fraction_NO_Overall_Reaction[0],'--',
+                 residentTimeDetail,fraction_NO_Detail_Reaction/fraction_NO_Detail_Reaction[0],'-.',
+                 residentTimeOverall,fraction_NH3_Overall_Reaction/fraction_NH3_Overall_Reaction[0],'v',
+                 residentTimeDetail,fraction_NH3_Detail_Reaction/fraction_NH3_Overall_Reaction[0],'^',
+                 )
+        plt.figure(2)
+        plt.plot(comparationListTime,diff2_NO,'--',
+                 comparationListTime,diff2_NH3,'-.',
+                 #residentTimeOverall,fraction_NH3_Overall_Reaction,'v',
+                 #residentTimeDetail,fraction_NH3_Detail_Reaction,'^',
+                 )
+        plt.xlabel('ResidentTime',fontsize='large')
+        plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+        plt.show()
     return (2*diff2_NO.mean()+diff2_NH3.mean())/3
-'''
-    plt.figure(1)
-    plt.plot(residentTimeOverall,fraction_NO_Overall_Reaction/fraction_NO_Overall_Reaction[0],'--',
-             residentTimeDetail,fraction_NO_Detail_Reaction/fraction_NO_Detail_Reaction[0],'-.',
-             #residentTimeOverall,fraction_NH3_Overall_Reaction,'v',
-             #residentTimeDetail,fraction_NH3_Detail_Reaction,'^',
-             )
-    plt.figure(2)
-    plt.plot(comparationListTime,diff2_NO,'--',
-             comparationListTime,diff2_NH3,'-.',
-             #residentTimeOverall,fraction_NH3_Overall_Reaction,'v',
-             #residentTimeDetail,fraction_NH3_Detail_Reaction,'^',
-             )
-    plt.xlabel('ResidentTime',fontsize='large')
-    plt.ylabel('Fraction out/ Fraction in',fontsize='large')
-    plt.show()
-'''
 
 PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                                  #('CO',0.0),
@@ -115,7 +115,9 @@ PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                       #solverTimeStepProfile = solTimeStepFile # Solver time profile (sec))
                                 )
 
-
-Coeficients=[1e15,0,3e4,1e15,0,3e4]
-val_diff=difference_Overall_Detail(Coefficient=Coeficients)
-print(val_diff)
+if __name__=='__main__':
+    #Coeficients=[1e15,0,3e4,1e15,0,3e4]
+    Coeficients=[0.3992979934240841, 0.12779536023563398, 1.4437159286173022,
+                 -1.2576276425283601, 0.7873922011572958, 0.7257656738415394]
+    val_diff=difference_Overall_Detail(Coefficient=Coeficients,draw=True)
+    print(val_diff)
