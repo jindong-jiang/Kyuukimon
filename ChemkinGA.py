@@ -34,7 +34,7 @@ def evaluate(individual):
             LimitMinEi<individual[2]<=10*10**LimitMaxEi and LimitMinAi<individual[3]<=10*10**LimitMaxAi and \
             LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
         #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
-         #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
+             #((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
         notes=evltFun.difference_Overall_Detail(individual)
 
     else:
@@ -92,7 +92,10 @@ def main():
         # The population is entirely replaced by the offspring
         pop[:] = offspring
         print(pop)
-        print(fitnesses)
+        fitnessesPOP=[]
+        for inds in pop:
+            fitnessesPOP.append(inds.fitness.values)
+        print(fitnessesPOP)
 
 
     return pop
