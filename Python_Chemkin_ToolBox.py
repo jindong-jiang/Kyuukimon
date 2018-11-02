@@ -1,8 +1,7 @@
-import numpy as np
 import pandas as pd
 import os
 
-
+ChemkinDiretory=r"C:\Program Files (x86)\Reaction\chemkin15083_pc"
 
 def gererateInputFile( reactants, temperature, pressure,velocity,viscosity,
                       reactorDiameter,endPosition,startPosition ,endTime,tempFile,
@@ -113,19 +112,26 @@ END
         stream.write(input_stream)
 
 
+fileEnvBat=os.path.join(ChemkinDiretory,r'bin\run_chemkin_env_setup.bat')
+fileEnvTherm=os.path.join(ChemkinDiretory,r'data\therm.dat')
+fileEnvTran=os.path.join(ChemkinDiretory,r'data\tran.dat')
+fileEnvChexe=os.path.join(ChemkinDiretory,r'bin\chem.exe')
+fileEnvChdtd=os.path.join(ChemkinDiretory,r'data\chemkindata.dtd')
 def generateBatFile(chemicalMecanismInp,ChemkinParametreInp,tempDir,tempFile):
-    input_stream=(r"""
-CALL "C:\Program Files (x86)\Reaction\chemkin15083_pc\bin\run_chemkin_env_setup.bat"
+
+
+    input_stream=(r"""CALL "{3}"
 cd {2}
 
-COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\therm.dat"
-COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\tran.dat"
-CALL "C:\Program Files (x86)\Reaction\chemkin15083_pc\bin\chem.exe" -i {0} -o test_python.out -d therm.dat
+COPY "{4}"
+COPY "{5}"
+CALL "{6}" -i {0} -o test_python.out -d therm.dat
 
-COPY "C:\Program Files (x86)\Reaction\chemkin15083_pc\data\chemkindata.dtd"
+COPY "{7}"
 SET CHEMKIN_MODE=Pro
 CKReactorGenericClosed -i {1} -o chemkin.out
 GetSolution
-CKSolnTranspose""".format(chemicalMecanismInp,ChemkinParametreInp,tempDir))
+CKSolnTranspose""".format(chemicalMecanismInp,ChemkinParametreInp,tempDir,fileEnvBat,fileEnvTherm,
+                          fileEnvTran,fileEnvChexe,fileEnvChdtd))
     with open(os.path.join(tempDir,tempFile),'w') as stream:
         stream.write(input_stream)

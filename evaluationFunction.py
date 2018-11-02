@@ -44,7 +44,7 @@ def difference_Overall_Detail(Coefficient,draw=False):
 
 
     fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction,residentTimeDetail=getMolesFractions(
-                                                    "G:\SNCR\SNCR\chem_add_ITL.inp",
+                                                   os.path.join(currentDir,"chem_add_ITL.inp"),
                                                     os.path.join(currentDir, "test.inp"))
     fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
                                                      #"G:\SNCR\SNCR\chem_add_ITL.inp",
