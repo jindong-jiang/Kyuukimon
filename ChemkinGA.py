@@ -10,23 +10,32 @@ import evaluationFunction as evltFun
 
 IND_SIZE = 6
 
-def atribute_initiale():
-    return random.random()
+def atribute_initiale(PMin,Pmax):
+    a=random.uniform(0,10)
+    b=random.uniform(PMin,Pmax)
+    return a*10**b
 
+LimitMinAi,LimitMaxAi=0,50
+LimitMinBetai,LimitMaxBetai=0,0
+LimitMinEi,LimitMaxEi=0,10
 toolbox = base.Toolbox()
-toolbox.register("attribute",atribute_initiale)
-toolbox.register("individual", tools.initRepeat, creator.Individual,
-                 toolbox.attribute, n=IND_SIZE)
+toolbox.register("attribute_Ai",atribute_initiale,LimitMinAi,LimitMaxAi)
+toolbox.register("attribute_Betai",atribute_initiale,LimitMinBetai,LimitMaxBetai)
+toolbox.register("attribute_Ei",atribute_initiale,LimitMinEi,LimitMaxEi)
+toolbox.register("individual", tools.initCycle, creator.Individual,
+                 (toolbox.attribute_Ai,toolbox.attribute_Betai,toolbox.attribute_Ei), n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 def evaluate(individual):
-    #individual[0]:learnning rate;individual[1] numbers of perceptron
-    #if 0<individual[0]<=1 and 0<individual[1]<=1:
-    #notes=(individual[0]-0.5)**2+(individual[1]-0.8)**2
-    notes=evltFun.difference_Overall_Detail(individual)
+    # individual[0]:learnning rate;individual[1] numbers of perceptron
+    if LimitMinAi<individual[0]<=10*10**LimitMaxAi and LimitMinBetai<individual[1]<=10*10**LimitMaxBetai and \
+            LimitMinEi<individual[2]<=10*10**LimitMaxEi and LimitMinAi<individual[3]<=10*10**LimitMaxAi and \
+            LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
+    # notes=(individual[0]-0.5)**2+(individual[1]-0.8)**2
+        notes=evltFun.difference_Overall_Detail(individual)
 
-    #else:
-    #    notes=100000
+    else:
+        notes=float('Inf')
 
     return notes,
 
@@ -36,11 +45,11 @@ toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("evaluate", evaluate)
 
 def main():
-    pop = toolbox.population(n=5)
+    pop = toolbox.population(n=2)
     CXPB, MUTPB, NGEN = 0.5, 0.2, 50
 
     # Evaluate the entire population
-    fitnesses = map(toolbox.evaluate, pop)
+    fitnesses = list(map(toolbox.evaluate, pop))
 
     for ind, fit in zip(pop, fitnesses):
         ind.fitness.values = fit
@@ -66,7 +75,7 @@ def main():
 
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = map(toolbox.evaluate, invalid_ind)
+        fitnesses = list(map(toolbox.evaluate, invalid_ind))
 
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
