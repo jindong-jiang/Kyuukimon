@@ -8,7 +8,8 @@ from deap import tools
 import evaluationFunction as evltFun
 
 
-IND_SIZE = 6
+POP_SIZE = 50
+CXPB, MUTPB,INDPB, NGEN = 0.5, 0.2, 0.2,100
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -28,25 +29,33 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 def evaluate(individual):
     # individual[0]:learnning rate;individual[1] numbers of perceptron
+
     if LimitMinAi<individual[0]<=10*10**LimitMaxAi and LimitMinBetai<individual[1]<=10*10**LimitMaxBetai and \
             LimitMinEi<individual[2]<=10*10**LimitMaxEi and LimitMinAi<individual[3]<=10*10**LimitMaxAi and \
             LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
-    # notes=(individual[0]-0.5)**2+(individual[1]-0.8)**2
+        #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
+         #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
         notes=evltFun.difference_Overall_Detail(individual)
 
     else:
         notes=float('Inf')
 
     return notes,
-
+def mutGaussianModified(individual, mu, sigma, indpb):
+    #print("This is the original:{0}".format(individual))
+    for i in range(len(individual)):
+        if random.uniform(0,1)<indpb:
+            individual[i]*=(1+random.gauss(mu,sigma))
+    #print("This is the number:{0}".format(individual))
+    return individual
 toolbox.register("mate", tools.cxTwoPoint)
-toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
-toolbox.register("select", tools.selTournament, tournsize=3)
+toolbox.register("mutate", mutGaussianModified, mu=0, sigma=1, indpb=INDPB)
+toolbox.register("select", tools.selTournament, tournsize=int(0.2*POP_SIZE))
 toolbox.register("evaluate", evaluate)
 
 def main():
-    pop = toolbox.population(n=2)
-    CXPB, MUTPB, NGEN = 0.5, 0.2, 50
+    pop = toolbox.population(n=POP_SIZE)
+
 
     # Evaluate the entire population
     fitnesses = list(map(toolbox.evaluate, pop))
