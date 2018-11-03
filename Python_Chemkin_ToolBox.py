@@ -121,15 +121,15 @@ def generateBatFile(chemicalMecanismInp,ChemkinParametreInp,tempDir,tempFile):
 
 
     input_stream=(r"""CALL "{3}"
-cd {2}
+cd "{2}"
 
 COPY "{4}"
 COPY "{5}"
-CALL "{6}" -i {0} -o test_python.out -d therm.dat
+CALL "{6}" -i "{0}" -o test_python.out -d therm.dat
 
 COPY "{7}"
 SET CHEMKIN_MODE=Pro
-CKReactorGenericClosed -i {1} -o chemkin.out
+CKReactorGenericClosed -i "{1}" -o chemkin.out
 GetSolution
 CKSolnTranspose""".format(chemicalMecanismInp,ChemkinParametreInp,tempDir,fileEnvBat,fileEnvTherm,
                           fileEnvTran,fileEnvChexe,fileEnvChdtd))
