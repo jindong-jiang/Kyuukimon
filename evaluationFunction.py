@@ -15,10 +15,22 @@ if os.path.exists(tempDir):
 
 os.makedirs(tempDir)
 
+def clearDir(pathToClear):
+    fileList=os.listdir(pathToClear)
+    for fileToClear in fileList:
+        abslouteFilePath=os.path.join(pathToClear,fileToClear)
+        if os.path.isdir(abslouteFilePath):
+            clearDir(abslouteFilePath)
+        else:
+            os.remove(abslouteFilePath)
+
+
+
 def getMolesFractions(machanismInp,expParameterInp):
     if os.path.exists(tempDir):
-        shutil.rmtree(tempDir)
-    os.makedirs(tempDir)
+        clearDir(tempDir)
+    else:
+        os.makedirs(tempDir)
     PyChemTB.generateBatFile(machanismInp,expParameterInp,tempDir,"DeNOxExp.bat")
     process=subprocess.Popen(os.path.join(tempDir,"DeNOxExp.bat"), cwd=tempDir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()

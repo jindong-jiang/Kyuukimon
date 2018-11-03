@@ -97,6 +97,10 @@ def main():
             fitnessesPOP.append(inds.fitness.values)
         print(fitnessesPOP)
 
+        input_stream=("""step{0} pop: {1} \n step{0} fitnessesPOP {2} \n """.format(g,pop,fitnessesPOP) )
+        with open("logFile.txt",'a+') as stream:
+            stream.write(input_stream)
+
 
     return pop
 
