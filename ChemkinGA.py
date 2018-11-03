@@ -4,7 +4,12 @@ creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 # un individual, ca veut dire, un variable de vecteur
 import random
-from deap import tools
+try:
+    from deap import tools
+except:
+    import os
+    os.system("pip install deap")
+    from deap import tools
 import evaluationFunction as evltFun
 
 

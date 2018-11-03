@@ -129,7 +129,7 @@ PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
 
 if __name__=='__main__':
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]
-    Coeficients=[7.704883286554234e+19, 1.348468333936902, 11.309251905631744,
-                  111433.0624187178, 0.14427698799724054, 1904150988.5941665]
+    Coeficients=[5.348330620669335e+48, 4.314188887523937, 253112.08491570863,
+                 1436983657784202.5, 0.03257397887395242, 1004493603.586213]
     val_diff=difference_Overall_Detail(Coefficient=Coeficients,draw=True)
     print(val_diff)
