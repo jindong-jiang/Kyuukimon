@@ -5,7 +5,7 @@ RTIME ON   ! Turn on Residence Time Calculation
 !Surface_Temperature   ! Surface Temperature Same as Gas Temperature
 PRES 1   ! Pressure (atm)
 QLOS 0.0   ! Heat Loss (cal/sec)
-TEMP 1200   ! Temperature (K)
+TEMP 1800   ! Temperature (K)
 VEL 75 ! Axial Velocity (cm/sec)'
 VIS 0 ! ! Mixture Viscosity (g/cm-sec)'
 DIAM 3.2  ! Diameter (cm)

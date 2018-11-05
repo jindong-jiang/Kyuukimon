@@ -26,15 +26,7 @@ RTIME ON   ! Turn on Residence Time Calculation""")
     input_stream+=('QLOS 0.0   ! Heat Loss (cal/sec)\n')
     input_stream+=('TEMP {0:g}   ! Temperature (K)'.format(temperature))
 
-    if variableVolume:
-        with open(variableVolumeProfile, 'rb') as csvfile:
-            reader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-            for row in reader:
-                time = float(row[0].split(',')[0]) # (sec)
-                vol = float(row[0].split(',')[1]) # (cm3)
-                input_stream+=("""
-VPRO {0:g} {1:g}   ! Volume (cm3)""".format(time,vol))
-
+   
     # Species property block
 
     input_stream+=('''
@@ -58,31 +50,7 @@ RTLS 1.0E-7   ! Sensitivity Relative Tolerance
 RTOL 1.0E-8   ! Relative Tolerance
 GFAC 1.0   ! Gas Reaction Rate Multiplier""")
 
-    if solverTimeStepProfile:
-        with open(solverTimeStepProfile, 'rb') as csvfile2:
-            timeStepReader = csv.reader(csvfile2, delimiter=' ', quotechar='|')
-            for row in timeStepReader:
-                time = float(row[0].split(',')[0]) # (sec)
-                vol = float(row[0].split(',')[1]) # (sec)
-                input_stream+=("""
-STPTPRO {0:g} {1:g}           ! Solver Maximum Step Time (sec)""".format(time,vol))
-
-    if Continuations:
-        if numpy.array(Tlist).size:
-            for i in range(numpy.array(Tlist).shape[0]):
-                input_stream+=("""
-{0}
-{0}
-END
-TEMP {1:g}""".format(typeContinuation,numpy.array(Tlist)[i]))
-
-        if numpy.array(Plist).size:
-            for i in range(numpy.array(Plist).shape[0]):
-                input_stream+=("""
-{0}
-END
-PRES {1:g}""".format(typeContinuation,numpy.array(Plist)[i]/1.01325))
-
+    
     input_stream+=('\nEND')
 
     with open(tempFile, 'w') as stream:
