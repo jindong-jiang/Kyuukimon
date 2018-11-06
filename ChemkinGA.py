@@ -1,16 +1,19 @@
 from __future__ import division
-from deap import base, creator
-import numpy as np
-creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMin)
-# un individual, ca veut dire, un variable de vecteur
-import random
+
 try:
     from deap import tools
 except:
     import os
     os.system("pip install deap")
     from deap import tools
+
+from deap import base, creator
+import numpy as np
+creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+creator.create("Individual", list, fitness=creator.FitnessMin)
+# un individual, ca veut dire, un variable de vecteur
+import random
+
 import evaluationFunction as evltFun
 
 
