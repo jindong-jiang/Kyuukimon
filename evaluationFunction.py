@@ -99,6 +99,60 @@ def difference_Overall_Detail(Coefficient,draw=False):
         plt.show()
     return (2*diff2_NO.mean()+diff2_NH3.mean())/3
 
+
+def difference_Overall_Detail_temperature(Coeficients,temperatureListX,draw=False):
+    NH3_EndPoint_Overall=[]
+    NH3_EndPoint_Detail=[]
+    NO_EndPoint_Overall=[]
+    NO_EndPoint_Detail=[]
+    for temperatureIter in temperatureListX:
+        PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
+                                                 #('CO',0.0),
+                                                 #('CO2',0.15),
+                                                 #('H2',0.2),
+                                                 ('N2',0.7895),
+                                                 ('NH3',0.0003),
+                                                 ('NO',0.0002),
+                                                 ('O2',0.06),
+                                                 ('CO2',0.15)],     # Reactant (mole fraction)
+
+                                      temperature = temperatureIter, # Temperature(K)
+                                      pressure = 1 ,   # Pressure (bar)
+                                      velocity=75.0,
+                                      viscosity=0.0,
+                                      reactorDiameter=3.2,
+                                      endPosition=45.0,
+                                      startPosition=0.0 ,
+                                      endTime = 0.05 ,   # End Time (sec)
+                                      tempFile="test.inp")
+                    
+
+        PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
+                               Coeficients[0],Coeficients[1],Coeficients[2],Coeficients[3],Coeficients[4],Coeficients[5],
+                               tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
+        fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction,residentTimeDetail=getMolesFractions(
+                                                   os.path.join(currentDir,"chem_add_ITL.inp"),
+                                                    os.path.join(currentDir, "test.inp"))
+        fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
+                                                     #"G:\SNCR\SNCR\chem_add_ITL.inp",
+                                                    os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
+                                                    os.path.join(currentDir, "test.inp"))
+        NH3_EndPoint_Detail.append(fraction_NH3_Detail_Reaction.iloc[-1])
+        NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1])
+        NO_EndPoint_Detail.append(fraction_NO_Detail_Reaction.iloc[-1])
+        NO_EndPoint_Overall.append(fraction_NO_Overall_Reaction.iloc[-1])
+    diff_NH3=((np.array(NH3_EndPoint_Detail)-np.array(NH3_EndPoint_Overall))/fraction_NH3_Detail_Reaction.iloc[0])**2
+    diff_NO=((np.array(NO_EndPoint_Detail)-np.array(NO_EndPoint_Overall))/fraction_NO_Detail_Reaction.iloc[0])**2
+    if(draw):
+        plt.figure(1)
+        plt.plot(temperatureListX,NH3_EndPoint_Detail,'--',temperatureListX,NH3_EndPoint_Overall,'^')
+        plt.savefig('NH3.png')
+        plt.figure(2)
+        plt.plot(temperatureListX,NO_EndPoint_Detail,'-.',temperatureListX,NO_EndPoint_Overall,'v')
+        plt.savefig("NO.png")
+    return (diff_NH3.mean()+2*diff_NO.mean())/3
+
+
 PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
                                                  #('CO',0.0),
                                                  #('CO2',0.15),
@@ -137,50 +191,5 @@ if __name__=='__main__':
     #print(val_diff)
     # calculate the result for different operating condition
     listTemperature=np.linspace(500,1800,13)
-    NH3_EndPoint_Overall=[]
-    NH3_EndPoint_Detail=[]
-    NO_EndPoint_Overall=[]
-    NO_EndPoint_Detail=[]
-    for temperatureIter in listTemperature:
-        PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
-                                                 #('CO',0.0),
-                                                 #('CO2',0.15),
-                                                 #('H2',0.2),
-                                                 ('N2',0.7895),
-                                                 ('NH3',0.0003),
-                                                 ('NO',0.0002),
-                                                 ('O2',0.06),
-                                                 ('CO2',0.15)],     # Reactant (mole fraction)
-
-                                      temperature = temperatureIter, # Temperature(K)
-                                      pressure = 1 ,   # Pressure (bar)
-                                      velocity=75.0,
-                                      viscosity=0.0,
-                                      reactorDiameter=3.2,
-                                      endPosition=45.0,
-                                      startPosition=0.0 ,
-                                      endTime = 0.05 ,   # End Time (sec)
-                                      tempFile="test.inp")
-
-        PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
-                               Coeficients[0],Coeficients[1],Coeficients[2],Coeficients[3],Coeficients[4],Coeficients[5],
-                               tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
-        fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction,residentTimeDetail=getMolesFractions(
-                                                   os.path.join(currentDir,"chem_add_ITL.inp"),
-                                                    os.path.join(currentDir, "test.inp"))
-        fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
-                                                     #"G:\SNCR\SNCR\chem_add_ITL.inp",
-                                                    os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
-                                                    os.path.join(currentDir, "test.inp"))
-        NH3_EndPoint_Detail.append(fraction_NH3_Detail_Reaction.iloc[-1])
-        NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1])
-        NO_EndPoint_Detail.append(fraction_NO_Detail_Reaction.iloc[-1])
-        NO_EndPoint_Overall.append(fraction_NO_Overall_Reaction.iloc[-1])
-        # print(fraction_NO_Overall_Reaction.ilpoc[])
-    plt.figure(1)
-    plt.plot(listTemperature,NH3_EndPoint_Detail,'--',listTemperature,NH3_EndPoint_Overall,'v')
-    plt.savefig('NH3.png')
-    plt.figure(2)
-    plt.plot(listTemperature,NO_EndPoint_Detail,'-.',listTemperature,NH3_EndPoint_Overall,'^')
-    plt.savefig('NO.png')
-
+    difference_Overall_Detail_temperature(Coeficients,listTemperature,draw=True)
+  
