@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-ChemkinDiretory=r"C:\Program Files (x86)\Reaction\chemkin15083_pc"
+ChemkinDiretory=r"C:\Program Files\Reaction\chemkin15083_pc"
 
 def gererateInputFile( reactants, temperature, pressure,velocity,viscosity,
                       reactorDiameter,endPosition,startPosition ,endTime,tempFile,
