@@ -36,6 +36,9 @@ toolbox.register("individual", tools.initCycle, creator.Individual,
                  (toolbox.attribute_Ai,toolbox.attribute_Betai,toolbox.attribute_Ei), n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
+listTemperature=np.linspace(500,1800,13)
+calculatorTemp=evltFun.temperatureListDiffCalculator(listTemperature)
+
 def evaluate(individual):
     # individual[0]:learnning rate;individual[1] numbers of perceptron
 
@@ -44,9 +47,9 @@ def evaluate(individual):
             LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
         #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
          #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
-        notes=evltFun.difference_Overall_Detail(individual)
-        #listTemperature=np.linspace(500,1800,13)
-        #notes=evltFun.difference_Overall_Detail_temperature(individual,listTemperature,draw=False)
+        #notes=evltFun.difference_Overall_Detail(individual)
+        
+        notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
 
     else:
         notes=float('Inf')
