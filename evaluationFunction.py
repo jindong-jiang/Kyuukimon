@@ -230,13 +230,15 @@ class temperatureListDiffCalculator:
 
 if __name__=='__main__':
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]
-    Coeficients=[164721785932.40033, 0.041793799683908665, 72.11399675981347, 
-                    36.03423629307893, 7.03599863468196, 94320.73686553436]
-    #val_diff=difference_Overall_Detail(Coefficient=Coeficients,draw=True)
-    #print(val_diff)
+    Coeficients=[3498.5172111780353, 5.5169879733298846, 51812.46347905936,
+     7.107369586702694e+19, 6.111647708933334, 170713.70515855757]
+    val_diff=difference_Overall_Detail(Coefficient=Coeficients,draw=True)
+    print(val_diff)
     # calculate the result for different operating condition
+    '''
     listTemperature=np.linspace(500,1800,13)
     calculatorTemperature=temperatureListDiffCalculator(listTemperature)
     result=calculatorTemperature.difference_Overall_Detail_temperature(Coeficients,draw=True)
     print(result)
+    '''
   

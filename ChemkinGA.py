@@ -18,7 +18,7 @@ import evaluationFunction as evltFun
 
 
 POP_SIZE = 50
-CXPB, MUTPB,INDPB, NGEN = 0.5, 0.2, 0.2,300
+CXPB, MUTPB,INDPB,PRCENTSEL, NGEN = 0.5, 0.5, 0.3,0.5,300
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -47,9 +47,9 @@ def evaluate(individual):
             LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
         #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
          #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
-        #notes=evltFun.difference_Overall_Detail(individual)
+        notes=evltFun.difference_Overall_Detail(individual)
         
-        notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
+        #notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
 
     else:
         notes=float('Inf')
@@ -64,7 +64,7 @@ def mutGaussianModified(individual, mu, sigma, indpb):
     return individual
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", mutGaussianModified, mu=0, sigma=1, indpb=INDPB)
-toolbox.register("select", tools.selTournament, tournsize=int(0.2*POP_SIZE))
+toolbox.register("select", tools.selTournament, tournsize=int(PRCENTSEL*POP_SIZE))
 toolbox.register("evaluate", evaluate)
 
 def main():
