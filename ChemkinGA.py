@@ -18,7 +18,7 @@ import evaluationFunction as evltFun
 
 
 POP_SIZE = 50
-CXPB, MUTPB,INDPB, NGEN = 0.5, 0.2, 0.2,100
+CXPB, MUTPB,INDPB, NGEN = 0.5, 0.2, 0.2,300
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)

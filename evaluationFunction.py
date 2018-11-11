@@ -45,10 +45,31 @@ def getMolesFractions(machanismInp,expParameterInp):
     fraction_NO,fraction_NH3,residentTime=PyChemTB.postProcess(resultFile=resultFileChemkin)
     return fraction_NO,fraction_NH3,residentTime
 
-	
+
+PyChemTB.gererateInputFile(         reactants=[#('CH4',0),
+                                                 #('CO',0.0),
+                                                 #('CO2',0.15),
+                                                 #('H2',0.2),
+                                                 ('N2',0.7895),
+                                                 ('NH3',0.0003),
+                                                 ('NO',0.0002),
+                                                 ('O2',0.06),
+                                                 ('CO2',0.15)],     # Reactant (mole fraction)
+
+                                      temperature = 1200, # Temperature(K)
+                                      pressure = 1 ,   # Pressure (bar)
+                                      velocity=75.0,
+                                      viscosity=0.0,
+                                      reactorDiameter=3.2,
+                                      endPosition=45.0,
+                                      startPosition=0.0 ,
+                                      endTime = 0.05 ,   # End Time (sec)
+                                      tempFile="testForResiTime.inp")
+
+
 fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction,residentTimeDetail=getMolesFractions(
                                                    os.path.join(currentDir,"chem_add_ITL.inp"),
-                                                    os.path.join(currentDir, "test.inp"))
+                                                    os.path.join(currentDir, "testForResiTime.inp"))
 
 f_NO_Detail=interp1d(residentTimeDetail.values,fraction_NO_Detail_Reaction.values,kind='linear',fill_value="extrapolate")	
 f_NH3_Detail=interp1d(residentTimeDetail.values,fraction_NH3_Detail_Reaction.values,kind='linear',fill_value="extrapolate")			
@@ -69,7 +90,7 @@ def difference_Overall_Detail(Coefficient,draw=False):
     fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
                                                      #"G:\SNCR\SNCR\chem_add_ITL.inp",
                                                     os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
-                                                    os.path.join(currentDir, "test.inp"))
+                                                    os.path.join(currentDir, "testForResiTime.inp"))
     # print(fraction_NO_Overall_Reaction.ilpoc[])
 
     
@@ -104,6 +125,8 @@ def difference_Overall_Detail(Coefficient,draw=False):
         plt.show()
     return (2*diff2_NO.mean()+diff2_NH3.mean())/3
 
+###################################################
+##               For different temperature       ##
 ###################################################
 	
 
@@ -198,11 +221,11 @@ def difference_Overall_Detail_temperature(Coeficients,temperatureListX,draw=Fals
 
 if __name__=='__main__':
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]
-    Coeficients=[17.445624086057517, 3.1696017196816237, 19.435471323261474, 
-                 6.654073775205523e+34, 2.1874889903887262, 76996777.81097752]
-    #val_diff=difference_Overall_Detail(Coefficient=Coeficients,draw=True)
-    #print(val_diff)
+    Coeficients=[164721785932.40033, 0.041793799683908665, 72.11399675981347, 
+                    36.03423629307893, 7.03599863468196, 94320.73686553436]
+    val_diff=difference_Overall_Detail(Coefficient=Coeficients,draw=True)
+    print(val_diff)
     # calculate the result for different operating condition
-    listTemperature=np.linspace(500,1800,13)
-    difference_Overall_Detail_temperature(Coeficients,listTemperature,draw=True)
+    #listTemperature=np.linspace(500,1800,13)
+    #difference_Overall_Detail_temperature(Coeficients,listTemperature,draw=True)
   
