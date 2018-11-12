@@ -47,9 +47,9 @@ def evaluate(individual):
             LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
         #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
          #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
-        notes=evltFun.difference_Overall_Detail(individual)
+        #notes=evltFun.difference_Overall_Detail(individual)
         
-        #notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
+        notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
 
     else:
         notes=float('Inf')
