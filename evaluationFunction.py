@@ -45,85 +45,86 @@ def getMolesFractions(machanismInp,expParameterInp):
     fraction_NO,fraction_NH3,residentTime=PyChemTB.postProcess(resultFile=resultFileChemkin)
     return fraction_NO,fraction_NH3,residentTime
 
+###########################################
+##        research on residence time     ##
+###########################################
 
-PyChemTB.gererateInputFile(         reactants=[#('CH4',0),
-                                                 #('CO',0.0),
-                                                 #('CO2',0.15),
-                                                 #('H2',0.2),
-                                                 ('N2',0.7895),
-                                                 ('NH3',0.0003),
-                                                 ('NO',0.0002),
-                                                 ('O2',0.06),
-                                                 ('CO2',0.15)],     # Reactant (mole fraction)
+class sncr4AllResidenceCalculator:
+    def __init__(self,temperatureX):        
+        PyChemTB.gererateInputFile(         reactants=[#('CH4',0),
+                                                        #('CO',0.0),
+                                                        #('CO2',0.15),
+                                                        #('H2',0.2),
+                                                        ('N2',0.7895),
+                                                        ('NH3',0.0003),
+                                                        ('NO',0.0002),
+                                                        ('O2',0.06),
+                                                        ('CO2',0.15)],     # Reactant (mole fraction)
 
-                                      temperature = 1200, # Temperature(K)
-                                      pressure = 1 ,   # Pressure (bar)
-                                      velocity=75.0,
-                                      viscosity=0.0,
-                                      reactorDiameter=3.2,
-                                      endPosition=45.0,
-                                      startPosition=0.0 ,
-                                      endTime = 0.05 ,   # End Time (sec)
-                                      tempFile="testForResiTime.inp")
+                                            temperature = temperatureX, # Temperature(K)
+                                            pressure = 1 ,   # Pressure (bar)
+                                            velocity=75.0,
+                                            viscosity=0.0,
+                                            reactorDiameter=3.2,
+                                            endPosition=45.0,
+                                            startPosition=0.0 ,
+                                            endTime = 0.05 ,   # End Time (sec)
+                                            tempFile="testForResiTime.inp")
 
+        fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction,residentTimeDetail=getMolesFractions(
+                                                        os.path.join(currentDir,"chem_add_ITL.inp"),
+                                                            os.path.join(currentDir, "testForResiTime.inp"))
 
-fraction_NO_Detail_Reaction,fraction_NH3_Detail_Reaction,residentTimeDetail=getMolesFractions(
-                                                   os.path.join(currentDir,"chem_add_ITL.inp"),
-                                                    os.path.join(currentDir, "testForResiTime.inp"))
-
-f_NO_Detail=interp1d(residentTimeDetail.values,fraction_NO_Detail_Reaction.values,kind='linear',fill_value="extrapolate")	
-f_NH3_Detail=interp1d(residentTimeDetail.values,fraction_NH3_Detail_Reaction.values,kind='linear',fill_value="extrapolate")			
-comparationListTime = np.linspace(residentTimeDetail.values[0],residentTimeDetail.values[-1],num=20,endpoint=True )
-comparationList_NO_Detail = f_NO_Detail(comparationListTime)
-comparationList_NH3_Detail = f_NH3_Detail(comparationListTime)									
+        f_NO_Detail=interp1d(residentTimeDetail.values,fraction_NO_Detail_Reaction.values,kind='linear',fill_value="extrapolate")	
+        f_NH3_Detail=interp1d(residentTimeDetail.values,fraction_NH3_Detail_Reaction.values,kind='linear',fill_value="extrapolate")			
+        self.comparationListTime = np.linspace(residentTimeDetail.values[0],residentTimeDetail.values[-1],num=20,endpoint=True )
+        self.comparationList_NO_Detail = f_NO_Detail(self.comparationListTime)
+        self.comparationList_NH3_Detail = f_NH3_Detail(self.comparationListTime)									
 													
-def difference_Overall_Detail(Coefficient,draw=False):
+    def difference_Overall_Detail(self,Coefficient,draw=False):
 
-    PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
-                               Coefficient[0],Coefficient[1],Coefficient[2],Coefficient[3],Coefficient[4],Coefficient[5],
-                               tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
+        PyChemTB.generateChemInput(Coefficient[0],Coefficient[1],Coefficient[2],
+                                    Coefficient[3],Coefficient[4],Coefficient[5],
+                                    tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
 
+        
+        fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
+                                                        #"G:\SNCR\SNCR\chem_add_ITL.inp",
+                                                        os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
+                                                        os.path.join(currentDir, "testForResiTime.inp"))
+        # print(fraction_NO_Overall_Reaction.ilpoc[])
 
+        
+        
+        f_NO_Overall=interp1d(residentTimeOverall.values,fraction_NO_Overall_Reaction.values,kind='linear',fill_value="extrapolate")
+        f_NH3_Overall=interp1d(residentTimeOverall.values,fraction_NH3_Overall_Reaction.values,kind='linear',fill_value="extrapolate")
 
+        
+        self.comparationList_NO_Overall = f_NO_Overall(self.comparationListTime)
+        self.comparationList_NH3_Overall = f_NH3_Overall(self.comparationListTime)
 
-    
-    fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
-                                                     #"G:\SNCR\SNCR\chem_add_ITL.inp",
-                                                    os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
-                                                    os.path.join(currentDir, "testForResiTime.inp"))
-    # print(fraction_NO_Overall_Reaction.ilpoc[])
+        self.diff2_NO = ((self.comparationList_NO_Detail-self.comparationList_NO_Overall)/fraction_NO_Overall_Reaction[0])**2
+        self.diff2_NH3 = ((self.comparationList_NH3_Detail-self.comparationList_NH3_Overall)/fraction_NH3_Overall_Reaction[0])**2
 
-    
-    
-    f_NO_Overall=interp1d(residentTimeOverall.values,fraction_NO_Overall_Reaction.values,kind='linear',fill_value="extrapolate")
-    f_NH3_Overall=interp1d(residentTimeOverall.values,fraction_NH3_Overall_Reaction.values,kind='linear',fill_value="extrapolate")
-
-    
-    comparationList_NO_Overall = f_NO_Overall(comparationListTime)
-    comparationList_NH3_Overall = f_NH3_Overall(comparationListTime)
-
-    diff2_NO = ((comparationList_NO_Detail-comparationList_NO_Overall)/fraction_NO_Overall_Reaction[0])**2
-    diff2_NH3 = ((comparationList_NH3_Detail-comparationList_NH3_Overall)/fraction_NH3_Overall_Reaction[0])**2
-
-    if(draw):
-        plt.figure(1)
-        pic01=plt.plot(residentTimeOverall,fraction_NO_Overall_Reaction/fraction_NO_Overall_Reaction[0],'--',
-                 residentTimeDetail,fraction_NO_Detail_Reaction/fraction_NO_Detail_Reaction[0],'-.',
-                 residentTimeOverall,fraction_NH3_Overall_Reaction/fraction_NH3_Overall_Reaction[0],'v',
-                 residentTimeDetail,fraction_NH3_Detail_Reaction/fraction_NH3_Overall_Reaction[0],'^',
-                 )
-        plt.savefig('1.png') 
-        plt.figure(2)
-        pic02=plt.plot(comparationListTime,diff2_NO,'--',
-                 comparationListTime,diff2_NH3,'-.',
-                 #residentTimeOverall,fraction_NH3_Overall_Reaction,'v',
-                 #residentTimeDetail,fraction_NH3_Detail_Reaction,'^',
-                 )
-        plt.xlabel('ResidentTime',fontsize='large')
-        plt.ylabel('Fraction out/ Fraction in',fontsize='large')
-        plt.savefig('2.png') 
-        plt.show()
-    return (2*diff2_NO.mean()+diff2_NH3.mean())/3
+        if(draw):
+            plt.figure(1)
+            pic01=plt.plot(self.comparationListTime,self.comparationList_NO_Overall/self.comparationList_NO_Overall[0],'^',
+                    self.comparationListTime,self.comparationList_NO_Detail/self.comparationList_NO_Detail[0],'-.',
+                    self.comparationListTime,self.comparationList_NH3_Overall/self.comparationList_NH3_Overall[0],'v',
+                    self.comparationListTime,self.comparationList_NH3_Detail/self.comparationList_NH3_Detail[0],'--',
+                    )
+            plt.savefig('1.png') 
+            plt.figure(2)
+            pic02=plt.plot(self.comparationListTime,self.diff2_NO,'--',
+                    self.comparationListTime,self.diff2_NH3,'-.',
+                    #residentTimeOverall,fraction_NH3_Overall_Reaction,'v',
+                    #residentTimeDetail,fraction_NH3_Detail_Reaction,'^',
+                    )
+            plt.xlabel('ResidentTime',fontsize='large')
+            plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+            plt.savefig('2.png') 
+            plt.show()
+        return (2*self.diff2_NO.mean()+self.diff2_NH3.mean())/3
 
 ###################################################
 ##               For different temperature       ##
@@ -225,14 +226,18 @@ class temperatureListDiffCalculator:
             plt.savefig("NO.png")
         return (diff_NH3.mean()+2*diff_NO.mean())/3
 
-
+###########################################
+##         Test the function             ##
+###########################################
 
 
 if __name__=='__main__':
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]
     Coeficients=[3498.5172111780353, 5.5169879733298846, 51812.46347905936,
      7.107369586702694e+19, 6.111647708933334, 170713.70515855757]
-    val_diff=difference_Overall_Detail(Coefficient=Coeficients,draw=True)
+
+    calculatorForResTime=sncr4AllResidenceCalculator(temperatureX=1200)
+    val_diff=calculatorForResTime.difference_Overall_Detail(Coefficient=Coeficients,draw=True)
     print(val_diff)
     # calculate the result for different operating condition
     '''
