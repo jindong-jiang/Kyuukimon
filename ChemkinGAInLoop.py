@@ -17,8 +17,8 @@ import random
 import evaluationFunction as evltFun
 
 
-POP_SIZE = 50
-CXPB, MUTPB,INDPB,PRCENTSEL, NGEN = 0.5, 0.5, 0.3,0.5,300
+POP_SIZE = 60
+CXPB, MUTPB,INDPB,PRCENTSEL, NGEN = 0.5, 0.5, 0.3,0.5,100
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -65,17 +65,17 @@ def mutGaussianModified(individual, mu, sigma, indpb):
 toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", mutGaussianModified, mu=0, sigma=1, indpb=INDPB)
 toolbox.register("select", tools.selTournament, tournsize=int(PRCENTSEL*POP_SIZE))
-toolbox.register("evaluate", evaluate)
+
 
 def main():
-    listTemperature=np.linspace(500,1800,13)
+    listTemperature=np.linspace(1800,900,10)
     for counter, temperatureI in enumerate(listTemperature):
         calculatorIter=evltFun.sncr4AllResidenceCalculator(temperatureX=temperatureI)
-
+        toolbox.register("evaluate", evaluate,calculator=calculatorIter)
         pop = toolbox.population(n=POP_SIZE)
 
         # Evaluate the entire population
-        fitnesses = list(map(toolbox.evaluate, pop,calculatorIter))
+        fitnesses = list(map(toolbox.evaluate, pop))
 
         for ind, fit in zip(pop, fitnesses):
             ind.fitness.values = fit
@@ -101,7 +101,7 @@ def main():
 
             # Evaluate the individuals with an invalid fitness
             invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-            fitnesses = list(map(toolbox.evaluate, invalid_ind,calculatorIter))
+            fitnesses = list(map(toolbox.evaluate, invalid_ind))
 
             for ind, fit in zip(invalid_ind, fitnesses):
                 ind.fitness.values = fit
@@ -114,10 +114,14 @@ def main():
                 fitnessesPOP.append(inds.fitness.values)
             print(fitnessesPOP)
 
-            input_stream=("""temperature:{3} step{0} pop: {1} \n step{0} fitnessesPOP {2} \n """.format(g,pop,fitnessesPOP,counter) )
+            input_stream=("temperature:{3} step{0} pop: {1} \n step{0} fitnessesPOP {2} \n ".format(g,pop,fitnessesPOP,counter) )
             with open("logFile.txt",'a+') as stream:
                 stream.write(input_stream)
-        
+
+        streamForResult=("{0},{1},{2} \n".format(counter,temperatureI,pop))
+        streamForResult+=("{0},{1},{2} \n".format(counter,temperatureI,fitnessesPOP))
+        with open("resultFile.csv",'a+') as stream:
+                stream.write(streamForResult)
 
 
         
