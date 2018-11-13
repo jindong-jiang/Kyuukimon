@@ -1,6 +1,7 @@
 from __future__ import division
-
+import csv
 try:
+    
     from deap import tools
 except:
     import os
@@ -17,8 +18,7 @@ import random
 import evaluationFunction as evltFun
 
 
-POP_SIZE = 60
-CXPB, MUTPB,INDPB,PRCENTSEL, NGEN = 0.5, 0.5, 0.3,0.5,100
+CXPB, MUTPB,INDPB,PRCENTSEL,POP_SIZE, NGEN = 0.5, 0.5, 0.3,0.35,60,100
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -68,7 +68,8 @@ toolbox.register("select", tools.selTournament, tournsize=int(PRCENTSEL*POP_SIZE
 
 
 def main():
-    listTemperature=np.linspace(1800,900,10)
+    #listTemperature=np.linspace(1100,1800,10)
+    listTemperature=np.array([1400,1600,1700])
     for counter, temperatureI in enumerate(listTemperature):
         calculatorIter=evltFun.sncr4AllResidenceCalculator(temperatureX=temperatureI)
         toolbox.register("evaluate", evaluate,calculator=calculatorIter)
@@ -85,6 +86,20 @@ def main():
             offspring = toolbox.select(pop, len(pop))
             # Clone the selected individuals
             offspring = list(map(toolbox.clone, offspring))
+
+                        
+            fitnessesSelected=[]
+            for inds in offspring:
+                fitnessesSelected.append(inds.fitness.values)            
+            input_stream=("After selecting:temperature:{3} step{0} pop: {1} \n step{0} fitnessesPOP {2} \n ".format(g,pop,fitnessesSelected,counter))
+            with open("logFile.txt",'a+') as stream:
+                stream.write(input_stream)
+            bestIndiv=tools.selTournament(offspring,1,len(offspring)) 
+            print([counter,temperatureI,g]+bestIndiv[0]+list(bestIndiv[0].fitness.values))
+            with open("bestresult.csv","a+") as csvFile:
+                csvWriter=csv.writer(csvFile)
+                csvWriter.writerow([counter,temperatureI,g]+bestIndiv[0]+list(bestIndiv[0].fitness.values))
+
             #print(offspring)
             # Apply crossover and mutation on the offspring
             for child1, child2 in zip(offspring[::2], offspring[1::2]):
@@ -107,25 +122,25 @@ def main():
                 ind.fitness.values = fit
 
             # The population is entirely replaced by the offspring
-            pop[:] = offspring
-            print(pop)
+            pop[:] = offspring            
             fitnessesPOP=[]
             for inds in pop:
                 fitnessesPOP.append(inds.fitness.values)
-            print(fitnessesPOP)
 
-            input_stream=("temperature:{3} step{0} pop: {1} \n step{0} fitnessesPOP {2} \n ".format(g,pop,fitnessesPOP,counter) )
+            
+            input_stream=("After Cross Over and mutation:\n temperature:{3} step{0} pop: {1} \n step{0} fitnessesPOP {2} \n ".format(g,pop,fitnessesPOP,counter) )
+            print(input_stream)
             with open("logFile.txt",'a+') as stream:
                 stream.write(input_stream)
 
-        streamForResult=("{0},{1},{2} \n".format(counter,temperatureI,pop))
-        streamForResult+=("{0},{1},{2} \n".format(counter,temperatureI,fitnessesPOP))
-        with open("resultFile.csv",'a+') as stream:
-                stream.write(streamForResult)
+       
+        with open("lastBestResult.csv","a+") as csvFile:
+            csvWriter=csv.writer(csvFile)
+            csvWriter.writerow([counter,temperatureI,g]+bestIndiv[0]+list(bestIndiv[0].fitness.values))
 
 
         
 
 if __name__=="__main__":
-    xx=main()
-    print(xx)
+    main()
+    
