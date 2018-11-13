@@ -18,7 +18,7 @@ import random
 import evaluationFunction as evltFun
 
 
-CXPB, MUTPB,INDPB,PRCENTSEL,POP_SIZE, NGEN = 0.5, 0.5, 0.3,0.35,60,100
+CXPB, MUTPB,INDPB,PRCENTSEL,POP_SIZE, NGEN = 0.5, 0.5, 0.3,0.35,80,150
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -47,7 +47,11 @@ def evaluate(individual,calculator):
             LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
         #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
          #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
-        notes=calculator.difference_Overall_Detail(individual)
+        try:
+            notes=calculator.difference_Overall_Detail(individual)
+        except:
+            notes=float('Inf')
+            print("This individual is not the right one")
         
         #notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
 
