@@ -5,10 +5,13 @@ import shutil
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import interp1d
+import csv
+import time
+
 
 currentDir = os.path.dirname(__file__)
 tempDir = os.path.join(currentDir, 'tempDeNOx')
-
+ImageResult=os.path.join(currentDir, 'ImageResult')
 
 if os.path.exists(tempDir):
     shutil.rmtree(tempDir)
@@ -107,13 +110,18 @@ class sncr4AllResidenceCalculator:
         self.diff2_NH3 = ((self.comparationList_NH3_Detail-self.comparationList_NH3_Overall)/fraction_NH3_Overall_Reaction[0])**2
 
         if(draw):
+            currentTime = time.strftime("%Y%m%d_%H%M%S")
             plt.figure(1)
             pic01=plt.plot(self.comparationListTime,self.comparationList_NO_Overall/self.comparationList_NO_Overall[0],'^',
                     self.comparationListTime,self.comparationList_NO_Detail/self.comparationList_NO_Detail[0],'-.',
                     self.comparationListTime,self.comparationList_NH3_Overall/self.comparationList_NH3_Overall[0],'v',
                     self.comparationListTime,self.comparationList_NH3_Detail/self.comparationList_NH3_Detail[0],'--',
                     )
-            plt.savefig('1.png') 
+            
+            plt.xlabel('ResidentTime',fontsize='large')
+            plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+            plt.savefig(os.path.join(ImageResult,currentTime+'NH3NO.png'))
+
             plt.figure(2)
             pic02=plt.plot(self.comparationListTime,self.diff2_NO,'--',
                     self.comparationListTime,self.diff2_NH3,'-.',
@@ -122,8 +130,8 @@ class sncr4AllResidenceCalculator:
                     )
             plt.xlabel('ResidentTime',fontsize='large')
             plt.ylabel('Fraction out/ Fraction in',fontsize='large')
-            plt.savefig('2.png') 
-            plt.show()
+            plt.savefig(os.path.join(ImageResult,currentTime+'Err.png')) 
+            
         return (2*self.diff2_NO.mean()+self.diff2_NH3.mean())/3
 
 ###################################################
@@ -232,13 +240,15 @@ class temperatureListDiffCalculator:
 
 
 if __name__=='__main__':
-    #Coeficients=[1e15,0,3e4,1e15,0,3e4]
-    Coeficients=[3498.5172111780353, 5.5169879733298846, 51812.46347905936,
-     7.107369586702694e+19, 6.111647708933334, 170713.70515855757]
-
-    calculatorForResTime=sncr4AllResidenceCalculator(temperatureX=1200)
-    val_diff=calculatorForResTime.difference_Overall_Detail(Coefficient=Coeficients,draw=True)
-    print(val_diff)
+    #Coeficients=[1e15,0,3e4,1e15,0,3e4]   
+    with open('lastBestResult.csv','r') as f:
+        reader=csv.reader(f,quoting=csv.QUOTE_NONNUMERIC)
+        for row in reader:
+            temperature2Test=row[1]
+            Coeficients=row[3:9]
+            calculatorForResTime=sncr4AllResidenceCalculator(temperatureX=1200)
+            val_diff=calculatorForResTime.difference_Overall_Detail(Coefficient=Coeficients,draw=True)
+            print(temperature2Test,Coeficients,val_diff,row[9])
     # calculate the result for different operating condition
     '''
     listTemperature=np.linspace(500,1800,13)

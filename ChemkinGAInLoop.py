@@ -18,7 +18,7 @@ import random
 import evaluationFunction as evltFun
 
 
-CXPB, MUTPB,INDPB,PRCENTSEL,POP_SIZE, NGEN = 0.5, 0.5, 0.3,0.35,80,150
+CXPB, MUTPB,INDPB,PRCENTSEL,POP_SIZE, NGEN = 0.5, 0.8, 0.5,0.35,80,150
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -72,8 +72,8 @@ toolbox.register("select", tools.selTournament, tournsize=int(PRCENTSEL*POP_SIZE
 
 
 def main():
-    #listTemperature=np.linspace(1100,1800,10)
-    listTemperature=np.array([1400,1600,1700])
+    listTemperature=np.linspace(1100,1800,10)
+    #listTemperature=np.array([1400,1700])
     for counter, temperatureI in enumerate(listTemperature):
         calculatorIter=evltFun.sncr4AllResidenceCalculator(temperatureX=temperatureI)
         toolbox.register("evaluate", evaluate,calculator=calculatorIter)
