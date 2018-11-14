@@ -98,7 +98,7 @@ CALL "{6}" -i "{0}" -o test_python.out -d therm.dat
 
 COPY "{7}"
 SET CHEMKIN_MODE=Pro
-CKReactorGenericClosed -i "{1}" -o chemkin.out
+CKReactorPlugFlow -i "{1}" -o chemkin.out
 GetSolution
 CKSolnTranspose""".format(chemicalMecanismInp,ChemkinParametreInp,tempDir,fileEnvBat,fileEnvTherm,
                           fileEnvTran,fileEnvChexe,fileEnvChdtd))

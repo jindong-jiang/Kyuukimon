@@ -72,7 +72,7 @@ toolbox.register("select", tools.selTournament, tournsize=int(PRCENTSEL*POP_SIZE
 
 
 def main():
-    listTemperature=np.linspace(1100,1800,10)
+    listTemperature=np.linspace(1100,1800,8)
     #listTemperature=np.array([1400,1700])
     for counter, temperatureI in enumerate(listTemperature):
         calculatorIter=evltFun.sncr4AllResidenceCalculator(temperatureX=temperatureI)
