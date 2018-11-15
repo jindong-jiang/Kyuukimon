@@ -98,7 +98,7 @@ def main():
             input_stream=("After selecting:temperature:{3} step{0} pop: {1} \n step{0} fitnessesPOP {2} \n ".format(g,pop,fitnessesSelected,counter))
             with open("logFile.txt",'a+') as stream:
                 stream.write(input_stream)
-            bestIndiv=tools.selTournament(offspring,1,len(offspring)) 
+            bestIndiv=toolbox.clone(tools.selTournament(offspring,1,len(offspring)))
             print([counter,temperatureI,g]+bestIndiv[0]+list(bestIndiv[0].fitness.values))
             with open("bestresult.csv","a+") as csvFile:
                 csvWriter=csv.writer(csvFile)

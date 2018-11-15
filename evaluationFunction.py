@@ -53,7 +53,8 @@ def getMolesFractions(machanismInp,expParameterInp):
 ###########################################
 
 class sncr4AllResidenceCalculator:
-    def __init__(self,temperatureX):        
+    def __init__(self,temperatureX):
+        self.temperatureValue=temperatureX      
         PyChemTB.gererateInputFile(         reactants=[#('CH4',0),
                                                         #('CO',0.0),
                                                         #('CO2',0.15),
@@ -111,7 +112,7 @@ class sncr4AllResidenceCalculator:
 
         if(draw):
             currentTime = time.strftime("%Y%m%d_%H%M%S")
-            plt.figure(1)
+            plt.figure()
             pic01=plt.plot(self.comparationListTime,self.comparationList_NO_Overall/self.comparationList_NO_Overall[0],'^',
                     self.comparationListTime,self.comparationList_NO_Detail/self.comparationList_NO_Detail[0],'-.',
                     self.comparationListTime,self.comparationList_NH3_Overall/self.comparationList_NH3_Overall[0],'v',
@@ -120,9 +121,12 @@ class sncr4AllResidenceCalculator:
             
             plt.xlabel('ResidentTime',fontsize='large')
             plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+            plt.title("De NOx Result with Temperature {0:.2f}K".format(self.temperatureValue))
+            plt.legend(["NO: Overall Reaction","NO: Detail Reaction",
+            "NH3: Overall Reaction","NH3: Detail Reaction"])
             plt.savefig(os.path.join(ImageResult,currentTime+'NH3NO.png'))
 
-            plt.figure(2)
+            plt.figure()
             pic02=plt.plot(self.comparationListTime,self.diff2_NO,'--',
                     self.comparationListTime,self.diff2_NH3,'-.',
                     #residentTimeOverall,fraction_NH3_Overall_Reaction,'v',
@@ -130,6 +134,9 @@ class sncr4AllResidenceCalculator:
                     )
             plt.xlabel('ResidentTime',fontsize='large')
             plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+            plt.title("Errors with Temperature {0:.2f}K".format(self.temperatureValue))
+            plt.legend(["NO Errors between Overall Reaction Detail Reaction",
+            "NH3 Errors between Overall Reaction Detail Reaction"])
             plt.savefig(os.path.join(ImageResult,currentTime+'Err.png')) 
             
         return (2*self.diff2_NO.mean()+self.diff2_NH3.mean())/3
@@ -226,10 +233,10 @@ class temperatureListDiffCalculator:
         diff_NH3=((np.array(self.NH3_EndPoint_Detail_Temp)-np.array(self.NH3_EndPoint_Overall))/fraction_NH3_Overall_Reaction.iloc[0])**2
         diff_NO=((np.array(self.NO_EndPoint_Detail_Temp)-np.array(self.NO_EndPoint_Overall))/fraction_NO_Overall_Reaction.iloc[0])**2
         if(draw):
-            plt.figure(1)
+            plt.figure()
             plt.plot(self.temperatureListX,self.NH3_EndPoint_Detail_Temp,'--',self.temperatureListX,self.NH3_EndPoint_Overall,'^')
             plt.savefig('NH3.png')
-            plt.figure(2)
+            plt.figure()
             plt.plot(self.temperatureListX,self.NO_EndPoint_Detail_Temp,'-.',self.temperatureListX,self.NO_EndPoint_Overall,'v')
             plt.savefig("NO.png")
         return (diff_NH3.mean()+2*diff_NO.mean())/3
@@ -242,13 +249,14 @@ class temperatureListDiffCalculator:
 if __name__=='__main__':
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]   
     with open('lastBestResult.csv','r') as f:
-        reader=csv.reader(f,quoting=csv.QUOTE_NONNUMERIC)
+        reader=csv.reader(f,quoting=csv.QUOTE_NONNUMERIC)    
         for row in reader:
-            temperature2Test=row[1]
-            Coeficients=row[3:9]
-            calculatorForResTime=sncr4AllResidenceCalculator(temperatureX=1200)
-            val_diff=calculatorForResTime.difference_Overall_Detail(Coefficient=Coeficients,draw=True)
-            print(temperature2Test,Coeficients,val_diff,row[9])
+            if len(row)==10:
+                temperature2Test=row[1]
+                Coeficients=row[3:9]
+                calculatorForResTime=sncr4AllResidenceCalculator(temperatureX=temperature2Test)
+                val_diff=calculatorForResTime.difference_Overall_Detail(Coefficient=Coeficients,draw=True)
+                print(temperature2Test,Coeficients,val_diff,row[9])
     # calculate the result for different operating condition
     '''
     listTemperature=np.linspace(500,1800,13)
