@@ -13,12 +13,11 @@ creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 # un individual, ca veut dire, un variable de vecteur
 import random
-
+import csv
 import evaluationFunction as evltFun
 
 
-POP_SIZE = 50
-CXPB, MUTPB,INDPB,PRCENTSEL, NGEN = 0.5, 0.5, 0.3,0.5,300
+CXPB, MUTPB,INDPB,PRCENTSEL, POP_SIZE,NGEN = 0.5, 0.8, 0.6,0.35,80,150
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -48,8 +47,11 @@ def evaluate(individual):
         #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
          #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
         #notes=evltFun.difference_Overall_Detail(individual)
-        
-        notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
+        try:
+            notes=calculatorTemp.difference_Overall_Detail_temperature(individual,draw=False)
+        except:
+            notes=float('Inf')
+            print("This solution is not valide")
 
     else:
         notes=float('Inf')
@@ -84,6 +86,13 @@ def main():
         offspring = list(map(toolbox.clone, offspring))
         #print(offspring)
         # Apply crossover and mutation on the offspring
+        
+        bestIndiv=toolbox.clone(tools.selTournament(offspring,1,len(offspring)))
+        print("Step:{0} | BestIndiv:{1} | Relative Error:{2} \n".format([g],bestIndiv[0],list(bestIndiv[0].fitness.values)))
+        with open("bestresultOutLet.csv","a+") as csvFile:
+            csvWriter=csv.writer(csvFile)
+            csvWriter.writerow([g]+bestIndiv[0]+list(bestIndiv[0].fitness.values))
+        
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             #print(child1,child2)
             if random.random() < CXPB:
