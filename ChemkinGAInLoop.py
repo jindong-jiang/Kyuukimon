@@ -18,7 +18,7 @@ import random
 import evaluationFunction as evltFun
 
 
-CXPB, MUTPB,INDPB,PRCENTSEL,POP_SIZE, NGEN = 0.5, 0.8, 0.5,0.35,80,150
+CXPB, MUTPB,INDPB,PRCENTSEL,POP_SIZE, NGEN = 0.5, 0.8, 0.6,0.35,80,150
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
