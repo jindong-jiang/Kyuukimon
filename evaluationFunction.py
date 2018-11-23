@@ -150,15 +150,24 @@ class temperatureListDiffCalculator:
 
     def __init__(self,temperatureListX):
         self.temperatureListX=temperatureListX
+        self.NH3_AllPoint_Detail_Temp_cmprList=[]
+        self.NO_AllPoint_Detail_Temp_cmprList=[]         
+        self.NH3_AllPoint_Overall_Temp_cmprList=[]
+        self.NO_AllPoint_Overall_Temp_cmprList=[]
+
         self.NH3_EndPoint_Detail_Temp=[]
         self.NO_EndPoint_Detail_Temp=[]
         self.NH3_EndPoint_Overall=[]
-        self.NO_EndPoint_Overall=[]   
+        self.NO_EndPoint_Overall=[] 
+
         self.resultWithDetailReaction()
         
     def resultWithDetailReaction(self):
+        self.NH3_AllPoint_Detail_Temp_cmprList=[]
+        self.NO_AllPoint_Detail_Temp_cmprList=[]
         self.NH3_EndPoint_Detail_Temp=[]
         self.NO_EndPoint_Detail_Temp=[]
+        
         
         for temperatureIter in self.temperatureListX:
             PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
@@ -185,15 +194,23 @@ class temperatureListDiffCalculator:
             fraction_NO_Detail_Reaction_Temp,fraction_NH3_Detail_Reaction_Temp,residentTimeDetail_Temp=getMolesFractions(
                                                     os.path.join(currentDir,"chem_add_ITL.inp"),
                                                         os.path.join(currentDir, "test.inp"))
+
+            f_NO_Detail=interp1d(residentTimeDetail_Temp.values,fraction_NO_Detail_Reaction_Temp.values,kind='linear',fill_value="extrapolate")	
+            f_NH3_Detail=interp1d(residentTimeDetail_Temp.values,fraction_NH3_Detail_Reaction_Temp.values,kind='linear',fill_value="extrapolate")			
+            self.comparationListTime = np.linspace(residentTimeDetail_Temp.values[0],residentTimeDetail_Temp.values[-1],num=20,endpoint=True )
+            comparationList_NO_Detail_1T = f_NO_Detail(self.comparationListTime)
+            comparationList_NH3_Detail_1T = f_NH3_Detail(self.comparationListTime)	
             
+            self.NH3_AllPoint_Detail_Temp_cmprList=np.hstack((self.NH3_AllPoint_Detail_Temp_cmprList,comparationList_NH3_Detail_1T))           
+            self.NO_AllPoint_Detail_Temp_cmprList=np.hstack((self.NO_AllPoint_Detail_Temp_cmprList,comparationList_NO_Detail_1T))  	
             self.NH3_EndPoint_Detail_Temp.append(fraction_NH3_Detail_Reaction_Temp.iloc[-1])
-            
-            self.NO_EndPoint_Detail_Temp.append(fraction_NO_Detail_Reaction_Temp.iloc[-1])       	
-	
+            self.NO_EndPoint_Detail_Temp.append(fraction_NO_Detail_Reaction_Temp.iloc[-1])
 	
     def difference_Overall_Detail_temperature(self,Coeficients,draw=False):
         self.NH3_EndPoint_Overall=[]
-        self.NO_EndPoint_Overall=[]               
+        self.NO_EndPoint_Overall=[]  
+        self.NH3_AllPoint_Overall_Temp_cmprList=[]
+        self.NO_AllPoint_Overall_Temp_cmprList=[]             
     
         for temperatureIter in self.temperatureListX:
             PyChemTB.gererateInputFile(        reactants=[#('CH4',0),
@@ -226,12 +243,29 @@ class temperatureListDiffCalculator:
                                                         os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
                                                         os.path.join(currentDir, "test.inp"))
         
-            self.NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1])        
-            self.NO_EndPoint_Overall.append(fraction_NO_Overall_Reaction.iloc[-1])
 
             
-        diff_NH3=((np.array(self.NH3_EndPoint_Detail_Temp)-np.array(self.NH3_EndPoint_Overall))/fraction_NH3_Overall_Reaction.iloc[0])**2
-        diff_NO=((np.array(self.NO_EndPoint_Detail_Temp)-np.array(self.NO_EndPoint_Overall))/fraction_NO_Overall_Reaction.iloc[0])**2
+            f_NO_Overall=interp1d(residentTimeOverall.values,fraction_NO_Overall_Reaction.values,kind='linear',fill_value="extrapolate")	
+            f_NH3_Overall=interp1d(residentTimeOverall.values,fraction_NH3_Overall_Reaction.values,kind='linear',fill_value="extrapolate")			
+            
+            comparationList_NO_Overall_1T = f_NO_Overall(self.comparationListTime)
+            comparationList_NH3_Overall_1T = f_NH3_Overall(self.comparationListTime)	
+            
+            self.NH3_AllPoint_Overall_Temp_cmprList=np.hstack((self.NH3_AllPoint_Overall_Temp_cmprList,comparationList_NH3_Overall_1T))           
+            self.NO_AllPoint_Overall_Temp_cmprList=np.hstack((self.NO_AllPoint_Overall_Temp_cmprList,comparationList_NO_Overall_1T))  	
+	
+
+            self.NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1])        
+            self.NO_EndPoint_Overall.append(fraction_NO_Overall_Reaction.iloc[-1])
+        '''
+        print("NH3 Detail: {} \n".format(self.NH3_AllPoint_Detail_Temp_cmprList))    
+        print("NH3 Overal: {} \n".format(self.NH3_AllPoint_Overall_Temp_cmprList))
+        print("NO Detail: {} \n".format(self.NO_AllPoint_Detail_Temp_cmprList))    
+        print("NO Overal: {} \n".format(self.NO_AllPoint_Overall_Temp_cmprList))
+        print("Temperature list：{} \n".format(self.temperatureListX))
+        '''
+        diff_NH3=((self.NH3_AllPoint_Detail_Temp_cmprList-self.NH3_AllPoint_Overall_Temp_cmprList)/fraction_NH3_Overall_Reaction.iloc[0])**2
+        diff_NO=((self.NO_AllPoint_Detail_Temp_cmprList-self.NO_AllPoint_Overall_Temp_cmprList)/fraction_NO_Overall_Reaction.iloc[0])**2
         if(draw):
             plt.figure()
             plt.plot(self.temperatureListX,self.NH3_EndPoint_Detail_Temp,'--',self.temperatureListX,self.NH3_EndPoint_Overall,'^')
@@ -247,6 +281,7 @@ class temperatureListDiffCalculator:
 
 
 if __name__=='__main__':
+    '''
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]   
     with open('lastBestResult.csv','r') as f:
         reader=csv.reader(f,quoting=csv.QUOTE_NONNUMERIC)    
@@ -259,9 +294,11 @@ if __name__=='__main__':
                 print(temperature2Test,Coeficients,val_diff,row[9])
     # calculate the result for different operating condition
     '''
-    listTemperature=np.linspace(500,1800,13)
+    listTemperature=np.linspace(500,800,3)
+    Coeficients=[1.6081693385341821e+41,3.8928449249650066,289.3258093769243,
+                1.9140849875007277e+23,8.890320367471858,46.79183672340516,]
     calculatorTemperature=temperatureListDiffCalculator(listTemperature)
     result=calculatorTemperature.difference_Overall_Detail_temperature(Coeficients,draw=True)
     print(result)
-    '''
+    
   

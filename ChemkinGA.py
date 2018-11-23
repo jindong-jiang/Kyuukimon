@@ -35,7 +35,7 @@ toolbox.register("individual", tools.initCycle, creator.Individual,
                  (toolbox.attribute_Ai,toolbox.attribute_Betai,toolbox.attribute_Ei), n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-listTemperature=np.linspace(500,1800,13)
+listTemperature=np.linspace(1100,1400,4)
 calculatorTemp=evltFun.temperatureListDiffCalculator(listTemperature)
 
 def evaluate(individual):
@@ -89,7 +89,7 @@ def main():
         
         bestIndiv=toolbox.clone(tools.selTournament(offspring,1,len(offspring)))
         print("Step:{0} | BestIndiv:{1} | Relative Error:{2} \n".format([g],bestIndiv[0],list(bestIndiv[0].fitness.values)))
-        with open("bestresultOutLet.csv","a+") as csvFile:
+        with open("bestresultResTimeTemprtList.csv","a+") as csvFile:
             csvWriter=csv.writer(csvFile)
             csvWriter.writerow([g]+bestIndiv[0]+list(bestIndiv[0].fitness.values))
         
