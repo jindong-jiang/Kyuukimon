@@ -124,6 +124,8 @@ class sncr4AllResidenceCalculator:
             plt.title("De NOx Result with Temperature {0:.2f}K".format(self.temperatureValue))
             plt.legend(["NO: Overall Reaction","NO: Detail Reaction",
             "NH3: Overall Reaction","NH3: Detail Reaction"])
+            plt.subplots_adjust(left=0.18, wspace=0.25, hspace=0.25,
+                    bottom=0.13, top=0.91)
             plt.savefig(os.path.join(ImageResult,currentTime+'NH3NO.png'))
 
             plt.figure()
@@ -137,6 +139,8 @@ class sncr4AllResidenceCalculator:
             plt.title("Errors with Temperature {0:.2f}K".format(self.temperatureValue))
             plt.legend(["NO Errors between Overall Reaction Detail Reaction",
             "NH3 Errors between Overall Reaction Detail Reaction"])
+            plt.subplots_adjust(left=0.18, wspace=0.25, hspace=0.25,
+                    bottom=0.13, top=0.91)
             plt.savefig(os.path.join(ImageResult,currentTime+'Err.png')) 
             
         return (2*self.diff2_NO.mean()+self.diff2_NH3.mean())/3
@@ -267,12 +271,26 @@ class temperatureListDiffCalculator:
         diff_NH3=((self.NH3_AllPoint_Detail_Temp_cmprList-self.NH3_AllPoint_Overall_Temp_cmprList)/fraction_NH3_Overall_Reaction.iloc[0])**2
         diff_NO=((self.NO_AllPoint_Detail_Temp_cmprList-self.NO_AllPoint_Overall_Temp_cmprList)/fraction_NO_Overall_Reaction.iloc[0])**2
         if(draw):
+            currentTime = time.strftime("%Y%m%d_%H%M%S")
+            
             plt.figure()
-            plt.plot(self.temperatureListX,self.NH3_EndPoint_Detail_Temp,'--',self.temperatureListX,self.NH3_EndPoint_Overall,'^')
-            plt.savefig('NH3.png')
+            plt.plot(self.temperatureListX,self.NH3_EndPoint_Detail_Temp/fraction_NH3_Overall_Reaction.iloc[0],'--',self.temperatureListX,self.NH3_EndPoint_Overall/fraction_NH3_Overall_Reaction.iloc[0],'^')
+            plt.xlabel('Temperature',fontsize='large')
+            plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+            plt.title("Concentration of NH3 at Endpoint of Reactor",fontsize='large')
+            plt.legend(["NH3: Detail Reaction","NH3: Overall Reaction"],fontsize='large')
+            plt.subplots_adjust(left=0.18, wspace=0.25, hspace=0.25,
+                    bottom=0.13, top=0.91)
+            plt.savefig(os.path.join(ImageResult,currentTime+'NH3EndPoint.png'))
             plt.figure()
-            plt.plot(self.temperatureListX,self.NO_EndPoint_Detail_Temp,'-.',self.temperatureListX,self.NO_EndPoint_Overall,'v')
-            plt.savefig("NO.png")
+            plt.plot(self.temperatureListX,self.NO_EndPoint_Detail_Temp/fraction_NO_Overall_Reaction.iloc[0],'-.',self.temperatureListX,self.NO_EndPoint_Overall/fraction_NO_Overall_Reaction.iloc[0],'v')
+            plt.xlabel('Temperature',fontsize='large')
+            plt.ylabel('Fraction out/ Fraction in',fontsize='large')
+            plt.title("Concentration of NO at Endpoint of Reactor",fontsize='large')
+            plt.legend(["NO: Detail Reaction","NO: Overall Reaction"],fontsize='large')
+            plt.subplots_adjust(left=0.18, wspace=0.25, hspace=0.25,
+                    bottom=0.13, top=0.91)
+            plt.savefig(os.path.join(ImageResult,currentTime+'NOEndPoint.png'))
         return (diff_NH3.mean()+2*diff_NO.mean())/3
 
 ###########################################
@@ -294,11 +312,18 @@ if __name__=='__main__':
                 print(temperature2Test,Coeficients,val_diff,row[9])
     # calculate the result for different operating condition
     '''
-    listTemperature=np.linspace(500,800,3)
-    Coeficients=[1.6081693385341821e+41,3.8928449249650066,289.3258093769243,
-                1.9140849875007277e+23,8.890320367471858,46.79183672340516,]
+    listTemperature=np.linspace(500,1600,20)
+    '''
+    Coeficients=[40609356.32837867,4.591567103723157,59293.190204797174,
+            1.2500592750801196e+48,0.2384295271582183,227638.0184552551]
+    '''
+    Coeficients=[[40609356.32837867,4.591567103723157,59293.190204797174,
+            1.2500592750801196e+48,0.2384295271582183,227638.0184552551],
+            [2.1489719679116273,3.6556482376087636,14.912031071151327,
+                10.977243831448774,3.883371131587305,26418.321246185045]]
     calculatorTemperature=temperatureListDiffCalculator(listTemperature)
-    result=calculatorTemperature.difference_Overall_Detail_temperature(Coeficients,draw=True)
-    print(result)
+    for coeficient in Coeficients:
+        result=calculatorTemperature.difference_Overall_Detail_temperature(coeficient,draw=True)
+        print(result)
     
   
