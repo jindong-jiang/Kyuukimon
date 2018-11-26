@@ -301,7 +301,7 @@ class temperatureListDiffCalculator:
 
             C_NO_Detail=self.NO_AllPoint_Detail_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NO_Overall_Reaction.iloc[0]
             time3DIndex,temperature3DIndex=np.meshgrid(self.comparationListTime,self.temperatureListX)
-            ax3d.plot_surface(time3DIndex,temperature3DIndex, C_NO_Detail, rstride=1, cstride=1, cmap=plt.cm.spring)
+            ax3d.plot_surface(time3DIndex,temperature3DIndex, C_NO_Detail, rstride=1, cstride=1, cmap=plt.cm.spring,alpha=0.8)
 
             C_NO_Overall=self.NO_AllPoint_Overall_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NO_Overall_Reaction.iloc[0]
             
@@ -315,7 +315,7 @@ class temperatureListDiffCalculator:
             ax3d = Axes3D(fig)
             C_NH3_Detail=self.NH3_AllPoint_Detail_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NH3_Overall_Reaction.iloc[0]
             time3DIndex,temperature3DIndex=np.meshgrid(self.comparationListTime,self.temperatureListX)
-            ax3d.plot_surface(time3DIndex,temperature3DIndex, C_NH3_Detail, rstride=1, cstride=1, cmap=plt.cm.spring)
+            ax3d.plot_surface(time3DIndex,temperature3DIndex, C_NH3_Detail, rstride=1, cstride=1, cmap=plt.cm.spring,alpha=0.8)
 
             C_NH3_Overall=self.NH3_AllPoint_Overall_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NH3_Overall_Reaction.iloc[0]
             
