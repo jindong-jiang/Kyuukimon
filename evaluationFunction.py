@@ -2,6 +2,9 @@ import Python_Chemkin_ToolBox as PyChemTB
 import os
 import subprocess
 import shutil
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import interp1d
@@ -158,7 +161,7 @@ class temperatureListDiffCalculator:
         self.NO_AllPoint_Detail_Temp_cmprList=[]         
         self.NH3_AllPoint_Overall_Temp_cmprList=[]
         self.NO_AllPoint_Overall_Temp_cmprList=[]
-
+        self.timeListNumber=20
         self.NH3_EndPoint_Detail_Temp=[]
         self.NO_EndPoint_Detail_Temp=[]
         self.NH3_EndPoint_Overall=[]
@@ -201,7 +204,7 @@ class temperatureListDiffCalculator:
 
             f_NO_Detail=interp1d(residentTimeDetail_Temp.values,fraction_NO_Detail_Reaction_Temp.values,kind='linear',fill_value="extrapolate")	
             f_NH3_Detail=interp1d(residentTimeDetail_Temp.values,fraction_NH3_Detail_Reaction_Temp.values,kind='linear',fill_value="extrapolate")			
-            self.comparationListTime = np.linspace(residentTimeDetail_Temp.values[0],residentTimeDetail_Temp.values[-1],num=20,endpoint=True )
+            self.comparationListTime = np.linspace(residentTimeDetail_Temp.values[0],residentTimeDetail_Temp.values[-1],num=self.timeListNumber,endpoint=True )
             comparationList_NO_Detail_1T = f_NO_Detail(self.comparationListTime)
             comparationList_NH3_Detail_1T = f_NH3_Detail(self.comparationListTime)	
             
@@ -271,11 +274,12 @@ class temperatureListDiffCalculator:
         diff_NH3=((self.NH3_AllPoint_Detail_Temp_cmprList-self.NH3_AllPoint_Overall_Temp_cmprList)/fraction_NH3_Overall_Reaction.iloc[0])**2
         diff_NO=((self.NO_AllPoint_Detail_Temp_cmprList-self.NO_AllPoint_Overall_Temp_cmprList)/fraction_NO_Overall_Reaction.iloc[0])**2
         if(draw):
+            
             currentTime = time.strftime("%Y%m%d_%H%M%S")
             
             plt.figure()
             plt.plot(self.temperatureListX,self.NH3_EndPoint_Detail_Temp/fraction_NH3_Overall_Reaction.iloc[0],'--',self.temperatureListX,self.NH3_EndPoint_Overall/fraction_NH3_Overall_Reaction.iloc[0],'^')
-            plt.xlabel('Temperature',fontsize='large')
+            plt.xlabel('Temperature/K',fontsize='large')
             plt.ylabel('Fraction out/ Fraction in',fontsize='large')
             plt.title("Concentration of NH3 at Endpoint of Reactor",fontsize='large')
             plt.legend(["NH3: Detail Reaction","NH3: Overall Reaction"],fontsize='large')
@@ -284,13 +288,45 @@ class temperatureListDiffCalculator:
             plt.savefig(os.path.join(ImageResult,currentTime+'NH3EndPoint.png'))
             plt.figure()
             plt.plot(self.temperatureListX,self.NO_EndPoint_Detail_Temp/fraction_NO_Overall_Reaction.iloc[0],'-.',self.temperatureListX,self.NO_EndPoint_Overall/fraction_NO_Overall_Reaction.iloc[0],'v')
-            plt.xlabel('Temperature',fontsize='large')
+            plt.xlabel('Temperature/K',fontsize='large')
             plt.ylabel('Fraction out/ Fraction in',fontsize='large')
             plt.title("Concentration of NO at Endpoint of Reactor",fontsize='large')
             plt.legend(["NO: Detail Reaction","NO: Overall Reaction"],fontsize='large')
             plt.subplots_adjust(left=0.18, wspace=0.25, hspace=0.25,
                     bottom=0.13, top=0.91)
             plt.savefig(os.path.join(ImageResult,currentTime+'NOEndPoint.png'))
+            #----------3D Plot---------------#
+            fig = plt.figure()
+            ax3d = Axes3D(fig)
+
+            C_NO_Detail=self.NO_AllPoint_Detail_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NO_Overall_Reaction.iloc[0]
+            time3DIndex,temperature3DIndex=np.meshgrid(self.comparationListTime,self.temperatureListX)
+            ax3d.plot_surface(time3DIndex,temperature3DIndex, C_NO_Detail, rstride=1, cstride=1, cmap=plt.cm.spring)
+
+            C_NO_Overall=self.NO_AllPoint_Overall_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NO_Overall_Reaction.iloc[0]
+            
+            ax3d.scatter( time3DIndex,temperature3DIndex, C_NO_Overall, c='b',marker='*')            
+            ax3d.set_xlabel('Residence Time/s')
+            ax3d.set_ylabel('Temperature/K')
+            ax3d.set_zlabel('NO out/NO in') 
+            plt.show()
+
+            fig = plt.figure()
+            ax3d = Axes3D(fig)
+            C_NH3_Detail=self.NH3_AllPoint_Detail_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NH3_Overall_Reaction.iloc[0]
+            time3DIndex,temperature3DIndex=np.meshgrid(self.comparationListTime,self.temperatureListX)
+            ax3d.plot_surface(time3DIndex,temperature3DIndex, C_NH3_Detail, rstride=1, cstride=1, cmap=plt.cm.spring)
+
+            C_NH3_Overall=self.NH3_AllPoint_Overall_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NH3_Overall_Reaction.iloc[0]
+            
+            ax3d.scatter( time3DIndex,temperature3DIndex, C_NH3_Overall, c='b',marker='*')            
+            ax3d.set_xlabel('Residence Time/s')
+            ax3d.set_ylabel('Temperature/K')
+            ax3d.set_zlabel('NH3 out/NH3 in') 
+            plt.show()
+
+
+            
         return (diff_NH3.mean()+2*diff_NO.mean())/3
 
 ###########################################
@@ -320,7 +356,9 @@ if __name__=='__main__':
     Coeficients=[[40609356.32837867,4.591567103723157,59293.190204797174,
             1.2500592750801196e+48,0.2384295271582183,227638.0184552551],
             [2.1489719679116273,3.6556482376087636,14.912031071151327,
-                10.977243831448774,3.883371131587305,26418.321246185045]]
+                10.977243831448774,3.883371131587305,26418.321246185045],
+                [24605131153138.434,0.5423493881224208,0.5484230644458539,
+                865665.0299722904,3.380599012341277,26111.172189728528]]
     calculatorTemperature=temperatureListDiffCalculator(listTemperature)
     for coeficient in Coeficients:
         result=calculatorTemperature.difference_Overall_Detail_temperature(coeficient,draw=True)
