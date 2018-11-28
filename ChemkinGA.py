@@ -17,7 +17,7 @@ import csv
 import evaluationFunction as evltFun
 
 
-CXPB, MUTPB,INDPB,PRCENTSEL, POP_SIZE,NGEN = 0.5, 0.8, 0.6,0.35,80,150
+CXPB, MUTPB,INDPB,PRCENTSEL, POP_SIZE,NGEN = 0.5, 0.8, 0.4,0.3,80,200
 
 def atribute_initiale(PMin,Pmax):
     a=random.uniform(0,10)
@@ -35,7 +35,7 @@ toolbox.register("individual", tools.initCycle, creator.Individual,
                  (toolbox.attribute_Ai,toolbox.attribute_Betai,toolbox.attribute_Ei), n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-listTemperature=np.linspace(1200,1500,8)
+listTemperature=np.linspace(1100,1500,8)
 calculatorTemp=evltFun.temperatureListDiffCalculator(listTemperature)
 
 def evaluate(individual):

@@ -69,16 +69,33 @@ def postProcess(resultFile):
     except:
         print("No result data exists")
 
-def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile):
-    input_stream=("""ELEMENTS O H N C END
+def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile,withAdditive=False,*enhenceFactor):
+    if not withAdditive:
+        input_stream=("""ELEMENTS O H N C END
 SPECIES NH3 NO O2 N2 H2O CO2 END
 REACTIONS
 NH3+NO+0.25O2=>N2+1.5H2O {0:g}  {1:g}  {2:g}
 NH3+1.25O2=>NO+1.5H2O  {3:g} {4:g} {5:g}
 END
     """.format(A1,B1,E1,A2,B2,E2) )
-    with open(tempFile,'w') as stream:
-        stream.write(input_stream)
+        with open(tempFile,'w') as stream:
+            stream.write(input_stream)
+    else:
+        input_stream=("""ELEMENTS O H N C END
+SPECIES NH3 NO O2 N2 H2O CO2 CO CH4 H2 END
+REACTIONS
+NH3+NO+0.25O2+M=>N2+1.5H2O+M {0:g}  {1:g}  {2:g}
+CO/{6:g}/ H2/{7:g}/ CH4/{8:g}/
+NH3+1.25O2+M=>NO+1.5H2O+M  {3:g} {4:g} {5:g}
+CO/{9:g}/ H2/{10:g}/ CH4/{11:g}/
+END
+    """.format(A1,B1,E1,A2,B2,E2,enhenceFactor[0],enhenceFactor[1],enhenceFactor[2],
+    enhenceFactor[3],enhenceFactor[4],enhenceFactor[5]) )
+        with open(tempFile,'w') as stream:
+            stream.write(input_stream)
+
+
+
 
 
 fileEnvBat=os.path.join(ChemkinDiretory,r'bin\run_chemkin_env_setup.bat')
