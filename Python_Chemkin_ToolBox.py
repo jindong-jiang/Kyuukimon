@@ -69,7 +69,7 @@ def postProcess(resultFile):
     except:
         print("No result data exists")
 
-def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile,withAdditive=False,*enhenceFactor):
+def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile,withAdditive=False,enhenceFactor=None):
     if not withAdditive:
         input_stream=("""ELEMENTS O H N C END
 SPECIES NH3 NO O2 N2 H2O CO2 END

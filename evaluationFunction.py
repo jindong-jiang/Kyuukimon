@@ -329,6 +329,13 @@ class temperatureListDiffCalculator:
             
         return (diff_NH3.mean()+2*diff_NO.mean())/3
 
+###################################################
+##               with the additive               ##
+###################################################
+
+class Additive_Optimazition:
+
+    
 ###########################################
 ##         Test the function             ##
 ###########################################
