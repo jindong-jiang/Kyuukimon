@@ -16,29 +16,26 @@ import random
 import csv
 import evaluationFunction as evltFun
 
-enhenced_eff=10
-CXPB, MUTPB,INDPB,PRCENTSEL, POP_SIZE,NGEN = 0.5, 0.8, 0.4,0.3,80,200
+enhenced_eff_Limit=100
+CXPB, MUTPB,INDPB,PRCENTSEL, POP_SIZE,NGEN = 0.5, 0.8, 0.4,0.3,60,200
 def attribute_Indv():
-    return enhenced_eff*random.random()
+    return 10**(enhenced_eff_Limit*random.random())
 
 toolbox = base.Toolbox()
 
-toolbox.register("individual", tools.initRepeat,creator.Individual,attribute_Indv,n=6)
+toolbox.register("individual", tools.initRepeat,creator.Individual,attribute_Indv,n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 listTemperature=np.linspace(1100,1500,5)
-listCO=np.linspace(300e-6,900e-6,2)
-listH2=np.linspace(300e-6,900e-6,2)
-listCH4=np.linspace(300e-6,900e-6,2)
-calculator_Additive=evltFun.Additive_Optimazition(temperatureListX=listTemperature,ListCO=listCO,ListH2=listH2,ListCH4=listCH4)
+listAdd=np.linspace(0,900e-6,4)
+
+calculator_Additive=evltFun.Additive_Optimazition(temperatureListX=listTemperature,speciesAdd='CH4',ListAdd=listAdd)
 
 def evaluate(individual):
     # individual[0]:learnning rate;individual[1] numbers of perceptron
 
-    if 0<individual[0]<=enhenced_eff and 0<individual[1]<=enhenced_eff and \
-            0<individual[2]<=enhenced_eff and 0<individual[3]<=enhenced_eff and \
-            0<individual[4]<=enhenced_eff and 0<individual[5]<=enhenced_eff:       
-        try:
+    if 0<individual[0] and 0<individual[1]:
+        try:           
             notes=calculator_Additive.difference_Overall_Detail_temperature(individual,draw=False)
         except:
             notes=float('Inf')
