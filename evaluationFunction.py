@@ -422,6 +422,7 @@ class Additive_Optimazition:
                         if  temperatureIter>=1200:
                             Coeficients=[2.1489719679116273,3.6556482376087636,14.912031071151327,
                                         10.977243831448774,3.883371131587305,26418.321246185045]
+                        
                         PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
                                 Coeficients[0],Coeficients[1],Coeficients[2],Coeficients[3],Coeficients[4],Coeficients[5],
                                 tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
