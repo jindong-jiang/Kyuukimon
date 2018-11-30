@@ -25,11 +25,11 @@ toolbox = base.Toolbox()
 
 toolbox.register("individual", tools.initRepeat,creator.Individual,attribute_Indv,n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
+speciesAdd='CO'
 listTemperature=np.linspace(1100,1500,5)
 listAdd=np.linspace(0,900e-6,4)
 
-calculator_Additive=evltFun.Additive_Optimazition(temperatureListX=listTemperature,speciesAdd='CH4',ListAdd=listAdd)
+calculator_Additive=evltFun.Additive_Optimazition(temperatureListX=listTemperature,speciesAdd=speciesAdd,ListAdd=listAdd)
 
 def evaluate(individual):
     # individual[0]:learnning rate;individual[1] numbers of perceptron
@@ -77,7 +77,7 @@ def main():
         
         bestIndiv=toolbox.clone(tools.selTournament(offspring,1,len(offspring)))
         print("Step:{0} | BestIndiv:{1} | Relative Error:{2} \n".format([g],bestIndiv[0],list(bestIndiv[0].fitness.values)))
-        with open("bestresultforM.csv","a+") as csvFile:
+        with open(speciesAdd+"bestresultforM.csv","a+") as csvFile:
             csvWriter=csv.writer(csvFile)
             csvWriter.writerow([g]+bestIndiv[0]+list(bestIndiv[0].fitness.values))
         
