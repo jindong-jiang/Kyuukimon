@@ -25,9 +25,10 @@ toolbox = base.Toolbox()
 
 toolbox.register("individual", tools.initRepeat,creator.Individual,attribute_Indv,n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-speciesAdd='CO'
+speciesAdd='H2'
 listTemperature=np.linspace(1100,1500,5)
-listAdd=np.linspace(0,900e-6,4)
+
+listAdd=np.array([900e-6])
 
 calculator_Additive=evltFun.Additive_Optimazition(temperatureListX=listTemperature,speciesAdd=speciesAdd,ListAdd=listAdd)
 
