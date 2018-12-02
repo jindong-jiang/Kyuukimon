@@ -525,6 +525,9 @@ class Additive_Analyse:
                 
                 self.NH3_EndPoint_Detail_Temp.append(fraction_NH3_Detail_Reaction_Temp.iloc[-1]/fraction_NH3_Detail_Reaction_Temp.iloc[0])
                 self.NO_EndPoint_Detail_Temp.append(fraction_NO_Detail_Reaction_Temp.iloc[-1]/fraction_NO_Detail_Reaction_Temp.iloc[0])
+                with open(self.speciesAdd+"logFile.txt",'a+') as stream:
+                    stream.write("Additive:{0:g} ,temperture:{1:g} | Fraction EndPoint {2:g}  Fraction StartPoint {3:g}  \n".format(
+                               IterAddConctrt,temperatureIter, fraction_NO_Detail_Reaction_Temp.iloc[-1],fraction_NO_Detail_Reaction_Temp.iloc[0]))
         self.NH3_EndPoint_Detail_Temp_Np=np.array(self.NH3_EndPoint_Detail_Temp)
         self.NO_EndPoint_Detail_Temp_Np=np.array(self.NO_EndPoint_Detail_Temp)
     def analyse_leftshift_Reaction(self):
@@ -533,17 +536,25 @@ class Additive_Analyse:
         BestTemperatures=self.temperatureListX[C_NO_Detail.argmin(axis=1)]
         BestC=C_NO_Detail[np.arange(len(C_NO_Detail)),C_NO_Detail.argmin(axis=1)]
         plt.figure()
-        plt.plot(self.listAdd,-BestTemperatures+BestTemperatures[0])
+        TemperatureShift=-BestTemperatures+BestTemperatures[0]
+        plt.plot(self.listAdd,TemperatureShift)
         plt.xlabel("C(NO)")
         plt.ylabel("Tempeture Shift ($^\circ$C)")
         plt.savefig(os.path.join(ImageResult,self.speciesAdd+currentTime+'TempetureShift.png'))
+        plt.show()
+        
         plt.figure()
-        symbol=['-','-.',':','--']
-        for ithAdd in len(C_NO_Detail):            
-            plt.plot(self.temperatureListX,C_NO_Detail[ithAdd],symbol)
+        symbol=['.','*','o','v','^','<','>',',','1','2','3','4','s','p']
+        for ithAdd in np.arange(len(C_NO_Detail)):            
+            plt.plot(self.temperatureListX,C_NO_Detail[ithAdd],symbol[ithAdd%14])
         plt.ylabel("NO(out)/NO(in)")
         plt.xlabel("Temperature ($^\circ$C)")
         plt.savefig(os.path.join(ImageResult,self.speciesAdd+currentTime+'DeNOx.png'))
+        plt.show()
+        with open(self.speciesAdd+"TemperatureShift.csv","a+") as csvFile:
+            csvWriter=csv.writer(csvFile)
+            csvWriter.writerow(self.listAdd)
+            csvWriter.writerow(TemperatureShift)
 
     def difference_Overall_Detail_temperature(self,CoeficientsForM,draw=False):
         self.NH3_EndPoint_Overall=[]
