@@ -10,6 +10,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 import csv
 import time
+import pandas as pd
 
 
 currentDir = os.path.dirname(__file__)
@@ -595,36 +596,36 @@ class Additive_Analyse:
                                                 #"G:\SNCR\SNCR\chem_add_ITL.inp",
                                                 os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
                                                 os.path.join(currentDir, "test.inp"))
-
+                
+                with open(self.speciesAdd+"logFile.txt",'a+') as stream:
+                    stream.write("Additive:{0:g} ,temperture:{1:g} | Fraction EndPoint {2:g}  Fraction StartPoint {3:g}  \n".format(
+                               IterAddConctrt,temperatureIter, fraction_NO_Overall_Reaction.iloc[-1],fraction_NO_Overall_Reaction.iloc[0]))
                 self.NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1]/fraction_NH3_Overall_Reaction.iloc[0])        
                 self.NO_EndPoint_Overall.append(fraction_NO_Overall_Reaction.iloc[-1]/fraction_NO_Overall_Reaction.iloc[0])
-        
-        if(draw):
-            
-            currentTime = time.strftime("%Y%m%d_%H%M%S")
-            
+        self.NO_EndPoint_Overall_Temp_Np=np.array(self.NO_EndPoint_Overall)
+        self.C_NO_overall=self.NO_EndPoint_Overall_Temp_Np.reshape(len(self.listAdd),len(self.temperatureListX))
+        d={self.speciesAdd+'Overall':self.NO_EndPoint_Overall_Temp_Np,self.speciesAdd+'Detail':self.NO_EndPoint_Detail_Temp_Np}
+        df=pd.DataFrame(data=d)
+        df1=pd.DataFrame(data={"temperatureListX":self.temperatureListX})
+        df2=pd.DataFrame(data={self.speciesAdd+"listAdd":self.listAdd})
+        dfForAdditive=pd.concat([df,df1,df2], ignore_index=True, axis=1)
+        dfForAdditive.to_csv(self.speciesAdd+"ResultAdditiveCompare.csv")
+        if(draw):            
+            currentTime = time.strftime("%Y%m%d_%H%M%S")    
             plt.figure()
-            plt.plot(self.temperatureListX,self.NH3_EndPoint_Detail_Temp/fraction_NH3_Overall_Reaction.iloc[0],'--',self.temperatureListX,self.NH3_EndPoint_Overall/fraction_NH3_Overall_Reaction.iloc[0],'^')
-            plt.xlabel('Temperature/K',fontsize='large')
-            plt.ylabel('Fraction out/ Fraction in',fontsize='large')
-            plt.title("Concentration of NH3 at Endpoint of Reactor",fontsize='large')
-            plt.legend(["NH3: Detail Reaction","NH3: Overall Reaction"],fontsize='large')
-            plt.subplots_adjust(left=0.18, wspace=0.25, hspace=0.25,
-                    bottom=0.13, top=0.91)
-            plt.savefig(os.path.join(ImageResult,currentTime+'NH3EndPoint.png'))
-            plt.figure()
-            plt.plot(self.temperatureListX,self.NO_EndPoint_Detail_Temp/fraction_NO_Overall_Reaction.iloc[0],'-.',self.temperatureListX,self.NO_EndPoint_Overall/fraction_NO_Overall_Reaction.iloc[0],'v')
-            plt.xlabel('Temperature/K',fontsize='large')
-            plt.ylabel('Fraction out/ Fraction in',fontsize='large')
-            plt.title("Concentration of NO at Endpoint of Reactor",fontsize='large')
-            plt.legend(["NO: Detail Reaction","NO: Overall Reaction"],fontsize='large')
-            plt.subplots_adjust(left=0.18, wspace=0.25, hspace=0.25,
-                    bottom=0.13, top=0.91)
-            plt.savefig(os.path.join(ImageResult,currentTime+'NOEndPoint.png'))
+            symbolOverall=['o','v','^','<','>']
+            symbolDetail=['.-','--',':','.--','-']
+            for ithAdd in np.arange(len(self.C_NO_Detail)):            
+                plt.plot(self.temperatureListX,self.C_NO_Detail[ithAdd],symbolDetail[ithAdd%14])
+                plt.plot(self.temperatureListX,self.C_NO_overall[ithAdd],symbolOverall[ithAdd%14])
+            plt.ylabel("[NO](out)/[NO](in)")
+            plt.xlabel("Temperature ($^\circ$C)")
+            plt.savefig(os.path.join(ImageResult,self.speciesAdd+currentTime+'DeNOx.png'))
+            plt.show()
+    
            
 
-            
-        return (diff_NH3.mean()+2*diff_NO.mean())/3
+           
 
 
 ###########################################

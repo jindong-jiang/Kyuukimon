@@ -72,7 +72,7 @@ def postProcess(resultFile):
 def generateChemInput(A1,B1,E1,A2,B2,E2,tempFile,withAdditive=False,speciesAdd=None,enhenceFactor=None):
     if not withAdditive:
         input_stream=("""ELEMENTS O H N C END
-SPECIES NH3 NO O2 N2 H2O CO2 END
+SPECIES NH3 NO O2 N2 H2O CO2 CO CH4 H2 END
 REACTIONS
 NH3+NO+0.25O2=>N2+1.5H2O {0:g}  {1:g}  {2:g}
 NH3+1.25O2=>NO+1.5H2O  {3:g} {4:g} {5:g}

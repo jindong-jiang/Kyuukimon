@@ -36,10 +36,17 @@ def AnalyseData():
         plt.legend(["Data Calculated",'Fiting Curve'])
         plt.show()
         
-
+def TestAdditive():
+    for speciesAdd in ['H2','CH4','CO']:
+        listTemperature=np.linspace(800,1400,25)
+        #listAdd=np.linspace(0,900e-6,4)
+        listAdd=np.array([0,300e-6,900e-6])
+        dictAdd={'H2':(58.0651,32038.1),'CH4':(15.4262,1.54889e8),'CO':(55.4224,6941.1)}
+        calculator_Additive=evltFun.Additive_Analyse(temperatureListX=listTemperature,speciesAdd=speciesAdd,ListAdd=listAdd)
+        calculator_Additive.Detail_Overall_withAdd(dictAdd)
 
         
 
 
 if __name__=='__main__':
-    AnalyseData()
+    TestAdditive()
