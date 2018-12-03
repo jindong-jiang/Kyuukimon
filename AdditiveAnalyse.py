@@ -11,8 +11,13 @@ def GatherData():
     listAdd=np.linspace(0,9000e-6,31)
     calculator_Additive=evltFun.Additive_Analyse(temperatureListX=listTemperature,speciesAdd=speciesAdd,ListAdd=listAdd)
     calculator_Additive.analyse_leftshift_Reaction()
+    
 def func(x,a,b):
     return a*np.log(b*x+1)
+    '''
+def func(x,a,b):
+    return a*x/(b+x)
+    '''  
 
 def AnalyseData():
     for speciesAdd in ['H2','CH4','CO']:
@@ -25,9 +30,10 @@ def AnalyseData():
         plt.figure()
         plt.plot(cAdd*1e6,TemperatureShift,'*')
         plt.plot(cAdd*1e6,func(cAdd,*popt),'r.--')
+
         plt.xlabel("["+speciesAdd+"] (μL/L)")
         plt.ylabel("Temperature Shift ($^\circ$C)")
-        
+        plt.legend(["Data Calculated",'Fiting Curve'])
         plt.show()
         
 

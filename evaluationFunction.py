@@ -530,11 +530,12 @@ class Additive_Analyse:
                                IterAddConctrt,temperatureIter, fraction_NO_Detail_Reaction_Temp.iloc[-1],fraction_NO_Detail_Reaction_Temp.iloc[0]))
         self.NH3_EndPoint_Detail_Temp_Np=np.array(self.NH3_EndPoint_Detail_Temp)
         self.NO_EndPoint_Detail_Temp_Np=np.array(self.NO_EndPoint_Detail_Temp)
+        self.C_NO_Detail=self.NO_EndPoint_Detail_Temp_Np.reshape(len(self.listAdd),len(self.temperatureListX))
+
     def analyse_leftshift_Reaction(self):
         currentTime = time.strftime("%Y%m%d_%H%M%S")        
-        C_NO_Detail=self.NO_EndPoint_Detail_Temp_Np.reshape(len(self.listAdd),len(self.temperatureListX))
-        BestTemperatures=self.temperatureListX[C_NO_Detail.argmin(axis=1)]
-        BestC=C_NO_Detail[np.arange(len(C_NO_Detail)),C_NO_Detail.argmin(axis=1)]
+        BestTemperatures=self.temperatureListX[self.C_NO_Detail.argmin(axis=1)]
+        BestC=self.C_NO_Detail[np.arange(len(self.C_NO_Detail)),self.C_NO_Detail.argmin(axis=1)]
         plt.figure()
         TemperatureShift=-BestTemperatures+BestTemperatures[0]
         plt.plot(self.listAdd,TemperatureShift)
@@ -545,8 +546,8 @@ class Additive_Analyse:
         
         plt.figure()
         symbol=['.','*','o','v','^','<','>',',','1','2','3','4','s','p']
-        for ithAdd in np.arange(len(C_NO_Detail)):            
-            plt.plot(self.temperatureListX,C_NO_Detail[ithAdd],symbol[ithAdd%14])
+        for ithAdd in np.arange(len(self.C_NO_Detail)):            
+            plt.plot(self.temperatureListX,self.C_NO_Detail[ithAdd],symbol[ithAdd%14])
         plt.ylabel("NO(out)/NO(in)")
         plt.xlabel("Temperature ($^\circ$C)")
         plt.savefig(os.path.join(ImageResult,self.speciesAdd+currentTime+'DeNOx.png'))
@@ -556,13 +557,15 @@ class Additive_Analyse:
             csvWriter.writerow(self.listAdd)
             csvWriter.writerow(TemperatureShift)
 
-    def difference_Overall_Detail_temperature(self,CoeficientsForM,draw=False):
+    def Detail_Overall_withAdd(self,coeficientAddDict,draw=False):
         self.NH3_EndPoint_Overall=[]
-        self.NO_EndPoint_Overall=[]         
-    
-
+        self.NO_EndPoint_Overall=[]   
+        coefAdd=coeficientAddDict[self.speciesAdd]
+        
         for IterAddConctrt in self.listAdd:
             for temperatureIter in self.temperatureListX:
+                temperatureShift=coefAdd[0]*np.log(coefAdd[1]*IterAddConctrt+1)
+                temperatureIter+=temperatureShift
                 PyChemTB.gererateInputFile( reactants=[('N2',0.7895-IterAddConctrt),(self.speciesAdd,IterAddConctrt),
                                             ('NH3',0.0003),
                                             ('NO',0.0002),('O2',0.06),('CO2',0.15)],     # Reactant (mole fraction)
@@ -586,37 +589,16 @@ class Additive_Analyse:
                 
                 PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
                         Coeficients[0],Coeficients[1],Coeficients[2],Coeficients[3],Coeficients[4],Coeficients[5],
-                        tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
-                        withAdditive=True,speciesAdd=self.speciesAdd,enhenceFactor=CoeficientsForM)
+                        tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
 
                 fraction_NO_Overall_Reaction,fraction_NH3_Overall_Reaction,residentTimeOverall=getMolesFractions(
                                                 #"G:\SNCR\SNCR\chem_add_ITL.inp",
                                                 os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
                                                 os.path.join(currentDir, "test.inp"))
 
-
-
-                f_NO_Overall=interp1d(residentTimeOverall.values,fraction_NO_Overall_Reaction.values,kind='linear',fill_value="extrapolate")	
-                f_NH3_Overall=interp1d(residentTimeOverall.values,fraction_NH3_Overall_Reaction.values,kind='linear',fill_value="extrapolate")			
-                
-                comparationList_NO_Overall_1T = f_NO_Overall(self.comparationListTime)
-                comparationList_NH3_Overall_1T = f_NH3_Overall(self.comparationListTime)	
-                
-                self.NH3_AllPoint_Overall_Temp_cmprList=np.hstack((self.NH3_AllPoint_Overall_Temp_cmprList,comparationList_NH3_Overall_1T))           
-                self.NO_AllPoint_Overall_Temp_cmprList=np.hstack((self.NO_AllPoint_Overall_Temp_cmprList,comparationList_NO_Overall_1T))  	
+                self.NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1]/fraction_NH3_Overall_Reaction.iloc[0])        
+                self.NO_EndPoint_Overall.append(fraction_NO_Overall_Reaction.iloc[-1]/fraction_NO_Overall_Reaction.iloc[0])
         
-
-                self.NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1])        
-                self.NO_EndPoint_Overall.append(fraction_NO_Overall_Reaction.iloc[-1])
-        '''
-        print("NH3 Detail: {} \n".format(self.NH3_AllPoint_Detail_Temp_cmprList))    
-        print("NH3 Overal: {} \n".format(self.NH3_AllPoint_Overall_Temp_cmprList))
-        print("NO Detail: {} \n".format(self.NO_AllPoint_Detail_Temp_cmprList))    
-        print("NO Overal: {} \n".format(self.NO_AllPoint_Overall_Temp_cmprList))
-        print("Temperature list：{} \n".format(self.temperatureListX))
-        '''
-        diff_NH3=((self.NH3_AllPoint_Detail_Temp_cmprList-self.NH3_AllPoint_Overall_Temp_cmprList)/fraction_NH3_Overall_Reaction.iloc[0])**2
-        diff_NO=((self.NO_AllPoint_Detail_Temp_cmprList-self.NO_AllPoint_Overall_Temp_cmprList)/fraction_NO_Overall_Reaction.iloc[0])**2
         if(draw):
             
             currentTime = time.strftime("%Y%m%d_%H%M%S")
