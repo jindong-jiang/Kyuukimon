@@ -558,14 +558,17 @@ class Additive_Analyse:
             csvWriter.writerow(self.listAdd)
             csvWriter.writerow(TemperatureShift)
 
-    def Detail_Overall_withAdd(self,coeficientAddDict,draw=False):
+    def Detail_Overall_withAdd(self,coeficientAddDict,funEmploye=1,draw=False):
         self.NH3_EndPoint_Overall=[]
         self.NO_EndPoint_Overall=[]   
         coefAdd=coeficientAddDict[self.speciesAdd]
         
         for IterAddConctrt in self.listAdd:
             for temperatureIter in self.temperatureListX:
-                temperatureShift=coefAdd[0]*np.log(coefAdd[1]*IterAddConctrt+1)
+                if funEmploye==1:
+                    temperatureShift=coefAdd[0]*np.log(coefAdd[1]*IterAddConctrt+1)
+                else:
+                    temperatureShift=coefAdd[0]*IterAddConctrt/(coefAdd[1]+IterAddConctrt)
                 temperatureIter+=temperatureShift
                 PyChemTB.gererateInputFile( reactants=[('N2',0.7895-IterAddConctrt),(self.speciesAdd,IterAddConctrt),
                                             ('NH3',0.0003),
@@ -597,7 +600,7 @@ class Additive_Analyse:
                                                 os.path.join(currentDir,"ChemInput_OverallReaction.inp"),
                                                 os.path.join(currentDir, "test.inp"))
                 
-                with open(self.speciesAdd+"logFile.txt",'a+') as stream:
+                with open(self.speciesAdd+"{0:g}logFile.txt".format(funEmploye),'a+') as stream:
                     stream.write("Additive:{0:g} ,temperture:{1:g} | Fraction EndPoint {2:g}  Fraction StartPoint {3:g}  \n".format(
                                IterAddConctrt,temperatureIter, fraction_NO_Overall_Reaction.iloc[-1],fraction_NO_Overall_Reaction.iloc[0]))
                 self.NH3_EndPoint_Overall.append(fraction_NH3_Overall_Reaction.iloc[-1]/fraction_NH3_Overall_Reaction.iloc[0])        
@@ -609,7 +612,7 @@ class Additive_Analyse:
         df1=pd.DataFrame(data={"temperatureListX":self.temperatureListX})
         df2=pd.DataFrame(data={self.speciesAdd+"listAdd":self.listAdd})
         dfForAdditive=pd.concat([df,df1,df2], ignore_index=True, axis=1)
-        dfForAdditive.to_csv(self.speciesAdd+"ResultAdditiveCompare.csv")
+        dfForAdditive.to_csv(self.speciesAdd+"ResultAdditiveCompare{0:g}.csv".format(funEmploye))
         if(draw):            
             currentTime = time.strftime("%Y%m%d_%H%M%S")    
             plt.figure()
