@@ -240,8 +240,15 @@ class temperatureListDiffCalculator:
                                         startPosition=0.0 ,
                                         endTime = 0.05 ,   # End Time (sec)
                                         tempFile="test.inp")
-                        
-
+            ''' 
+            #for the plot          
+            if  temperatureIter<1200:
+                Coeficients=[40609356.32837867,4.591567103723157,59293.190204797174,
+                                1.2500592750801196e+48,0.2384295271582183,227638.0184552551]
+            if  temperatureIter>=1200:
+                Coeficients=[2.1489719679116273,3.6556482376087636,14.912031071151327,
+                                10.977243831448774,3.883371131587305,26418.321246185045]
+            '''
             PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
                                 Coeficients[0],Coeficients[1],Coeficients[2],Coeficients[3],Coeficients[4],Coeficients[5],
                                 tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
@@ -299,6 +306,12 @@ class temperatureListDiffCalculator:
             #----------3D Plot---------------#
             fig = plt.figure()
             ax3d = Axes3D(fig)
+            df=pd.DataFrame(data={'NO':self.NO_AllPoint_Detail_Temp_cmprList,'NH3':self.NH3_AllPoint_Detail_Temp_cmprList})
+            df1=pd.DataFrame(data={'Time':self.comparationListTime})
+            df2=pd.DataFrame(data={'temperature':self.temperatureListX})
+            dfToWrite=pd.concat([df,df1,df2], axis=1)
+            dfToWrite.to_csv(currentTime+"ResultOverallCompare.csv")
+
 
             C_NO_Detail=self.NO_AllPoint_Detail_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NO_Overall_Reaction.iloc[0]
             time3DIndex,temperature3DIndex=np.meshgrid(self.comparationListTime,self.temperatureListX)
@@ -331,7 +344,7 @@ class temperatureListDiffCalculator:
         return (diff_NH3.mean()+2*diff_NO.mean())/3
 
 ###################################################
-##               with the additive               ##
+##            with the additive  Methode of M    ##
 ###################################################
 
 class Additive_Optimazition:    
@@ -481,7 +494,7 @@ class Additive_Optimazition:
         return (diff_NH3.mean()+2*diff_NO.mean())/3
 
 ###################################################
-##         For the additive methode Classic      ##
+##   For the additive methode Classic QingXi     ##
 ###################################################
 
 class Additive_Analyse:    
