@@ -2,8 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
-
-
+import csv
 
 class plotData:
     def __init__(self,fontTaille):
@@ -62,7 +61,6 @@ class plotData:
         draw_image(indicator='Mole fraction NO2 end point')
         draw_image(indicator='Mole fraction N2O end point')
         draw_image(indicator='Mole fraction NH3 end point')       
-
     def verifyCaoQingXi(self):        
         symbol=iter(['^','s'])
         s=['-.','--']
@@ -116,7 +114,6 @@ class plotData:
                 plt.plot(df_exp['x'],df_exp['y'],s[i%2])
             plt.legend(['CH4 Simulation','CH4 Experiment','CO Simulation','CO Experiment'])
         plt.show()
-    
     def SNCR_AdditiveDetail(self):
         df=pd.read_csv("DataAnalyse\\"+'CSV_4_SNCR\\SNCR_ADDITIVE_Detail.csv',header=0).drop_duplicates()
         df.count()
@@ -168,8 +165,386 @@ class plotData:
                         plt.savefig("DataAnalyse\\"+'Fig\\'+indicator+'addx'+str(i)+Parameter_Study2[k%2]+'result.png',bbox_inches='tight')
                         plt.show()
                         plt.close()
-                
+    def CH4_Fig(self):
+        with open( "DataAnalyse\\"+'CSV_4_SNCR\CH4_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            CH4s=[]
+            NOs=[]
+            for row in reader:
+            # print(row)
+                try:
+                    Temperature=float(row[1])
+                    CH4=float(row[0])
+                    NO=float(row[3])
+                    temperatures.append(Temperature)
+                    CH4s.append(CH4)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x']
+            lgdArry=['0mg/m3 CH4','402mg/m3 CH4','804mg/m3 CH4','1206mg/m3 CH4','1608mg/m3 CH4']
+            DataPoint=[]
+            jj=-1
+            for j in [0,1,2,3,4]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(CH4s)) if CH4s[i]==0.0003*j])
+                NO_CH4_jppm = np.array([NOs[i]/0.0002 for i in range(len(CH4s)) if CH4s[i]==0.0003*j])
+                f=interp1d(temperature[1:], NO_CH4_jppm[1:],kind='cubic')# the 2 minimum values can not be the same
 
+                temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
+                ltemp,=plt.plot(temperature,NO_CH4_jppm,s[jj],label=lgdArry[jj],markersize=7)
+                DataPoint.append(ltemp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+        
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=DataPoint,fontsize='large')
+        plt.show()
+        #plt.savefig('CH4.eps',format="eps")            
+    def CO_Fig(self):
+        with open( 'DataAnalyse\\'+'CSV_4_SNCR\CO_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            COs=[]
+            NOs=[]
+            for row in reader:
+            # print(row)
+                try:
+                    Temperature=float(row[0])
+                    CO=float(row[1])
+                    NO=float(row[3])+float(row[5])
+                    temperatures.append(Temperature)
+                    COs.append(CO)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x']
+            lgdArry=['0mg/m3 CO','402mg/m3 CO','804mg/m3 CO','1206mg/m3 CO','1608mg/m3 CO']
+            jj=-1
+            DataPoint=[]
+            for j in [0,1,2,3,4]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(COs)) if COs[i]==0.0003*j])
+                NO_CO_0ppm = np.array([NOs[i]/0.0002 for i in range(len(COs)) if COs[i]==0.0003*j])
+                f=interp1d(temperature[1:], NO_CO_0ppm[1:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
+                ltemp,=plt.plot(temperature,NO_CO_0ppm,s[jj],label=lgdArry[jj],markersize=7)
+                DataPoint.append(ltemp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+                
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=DataPoint,fontsize='large')
+        plt.show()
+    def H2_Fig(self):
+        with open( 'DataAnalyse\\'+'CSV_4_SNCR\H2_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            H2s=[]
+            NOs=[]
+            for row in reader:
+            # print(row)
+                try:
+                    Temperature=float(row[1])
+                    H2=float(row[0])
+                    NO=float(row[3])
+                    temperatures.append(Temperature)
+                    H2s.append(H2)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x']
+            lgdArry=['0mg/m3 H2','402mg/m3 H2','804mg/m3 H2','1206mg/m3 H2','1608mg/m3 H2']
+            DataPoint=[]
+            jj=-1
+            for j in [0,1,2,3,4]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(H2s)) if H2s[i]==0.0003*j])
+                NO_H2_0ppm = np.array([NOs[i]/0.0002 for i in range(len(H2s)) if H2s[i]==0.0003*j])
+                f=interp1d(temperature[1:], NO_H2_0ppm[1:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
+                ltemp,=plt.plot(temperature,NO_H2_0ppm,s[jj],label=lgdArry[jj],markersize=7)
+                DataPoint.append(ltemp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=DataPoint,fontsize='large')
+        plt.show()
+    def H2O_Fig(self):
+        with open( 'DataAnalyse\\'+'CSV_4_SNCR\H2O_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            factors=[]
+            NOs=[]
+            for row in reader:
+            # print(row)
+                try:
+                    Temperature=float(row[1])
+                    factor=float(row[0])
+                    NO=float(row[3])
+                    temperatures.append(Temperature)
+                    factors.append(factor)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x','D']
+            lgdArry=['0% H2O' ,'2% H2O' ,'4% H2O' ,'6% H2O' ,'8% H2O' ,'10% H2O' ]
+            jj=-1
+            DataPoint=[]
+            for j in [0,1,2,3,4,5]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(factors)) if factors[i]==0.02*j])
+                NO_factor_j = np.array([NOs[i]/0.0002 for i in range(len(factors)) if factors[i]==0.02*j])
+                f=interp1d(temperature[1:], NO_factor_j[1:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
+                ltemp,= plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=6)
+                DataPoint.append(ltemp)
+                plt.plot( temperature_new,f(temperature_new),'--')
+                
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=DataPoint,fontsize='large')
+        plt.show()
+    def NO_NSR15_Fig(self):
+        with open( 'DataAnalyse\\'+r'CSV_4_SNCR\NO_NSR1.5_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            factors=[]
+            NOs=[]
+            for row in reader:
+            # print(row)
+                try:
+                    Temperature=float(row[0])
+                    factor=float(row[2])
+                    NO=float(row[4])
+                    temperatures.append(Temperature)
+                    factors.append(factor)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x','D']
+            jj=-1
+            lgdArry=['134mg/m3 NO' ,'509mg/m3 NO' ,'884mg/m3 NO' ,'1259mg/m3 NO' ,'1634mg/m3 NO' ,'2010mg/m3 NO']
+            dataPoint=[]
+            for j in [0,1,2,3,4,5]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(factors)) if abs(factors[i]-0.00028*j-0.0001)/(0.00028*j+0.0001)<10**-3])# the data can not be the value exacte,the range is necessary
+                NO_factor_j = np.array([NOs[i]/(0.00028*j+0.0001) for i in range(len(factors)) if abs(factors[i]-0.00028*j-0.0001)/(0.00028*j+0.0001)<10**-3])
+                f=interp1d(temperature[1:], NO_factor_j[1:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
+                ltmp , = plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=6)
+                dataPoint.append(ltmp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+                
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=dataPoint,fontsize='large')
+        plt.show()
+    def NSR_Fig(self):
+        with open( 'DataAnalyse\\'+r'CSV_4_SNCR\NSR_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            factors=[]
+            NOs=[]
+            for row in reader:
+                #print(row)
+                try:
+                    Temperature=float(row[0])
+                    factor=float(row[1])
+                    NO=float(row[3])
+                    temperatures.append(Temperature)
+                    factors.append(factor)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x','D']
+            jj=-1
+            dataPoint=[]
+            lgdArry=['NSR=0','NSR=0.6','NSR=1.2','NSR=1.8','NSR=2.4','NSR=3.0']
+            for j in [0,1,2,3,4,5]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(factors)) if abs(factors[i]-j*0.00012)<10**-5])# the data can not be the value exacte,the range is necessary
+                NO_factor_j = np.array([NOs[i]/0.0002 for i in range(len(factors)) if abs(factors[i]-j*0.00012)<10**-5])
+                f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=6)
+                dataPoint.append(ltmp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+                
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=dataPoint,fontsize='large')
+        plt.show()
+    def O2_Fig(self):
+        with open( 'DataAnalyse\\'+'CSV_4_SNCR\O2_NSR1.5_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            factors=[]
+            NOs=[]
+            for row in reader:
+                #print(row)
+                try:
+                    Temperature=float(row[0])
+                    factor=float(row[1])
+                    NO=float(row[3])
+                    temperatures.append(Temperature)
+                    factors.append(factor)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x','D']
+            jj=-1
+            lgdArry=['O2 0%' ,'O2 10%','O2 20%','O2 30%','O2 40%','O2 50%']
+            dataPoint=[]
+            for j in [0,1,2,3,4,5]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(factors)) if abs(factors[i]-j*0.1)<10**-5])# the data can not be the value exacte,the range is necessary
+                NO_factor_j = np.array([NOs[i]/0.0002 for i in range(len(factors)) if abs(factors[i]-j*0.1)<10**-5])
+                f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=7)
+                dataPoint.append(ltmp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+               
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=dataPoint,fontsize='large')
+        plt.show()
+    def pressure_Fig(self):
+        with open( 'DataAnalyse\\'+'CSV_4_SNCR\Pressure_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            factors=[]
+            NOs=[]
+            for row in reader:
+                #print(row)
+                try:
+                    Temperature=float(row[0])
+                    factor=float(row[1])
+                    NO=float(row[4])
+                    temperatures.append(Temperature)
+                    factors.append(factor)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x','D']
+            jj=-1
+            lgdArry=['p=1atm' ,'p=2.5atm','p=4atm','p=5.5atm','p=7atm','p=8.5atm']
+            dataPoint=[]
+            for j in [0,1,2,3,4,5]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(factors)) if abs(factors[i]-j*1.5-1)<10**-5])# the data can not be the value exacte,the range is necessary
+                NO_factor_j = np.array([NOs[i]/0.0002 for i in range(len(factors)) if abs(factors[i]-j*1.5-1)<10**-5])
+                f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=5)
+                dataPoint.append(ltmp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+               
+                plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=dataPoint,fontsize='large') 
+        plt.show()   
+    def pressure_NO2_Fig(self):
+        with open( 'DataAnalyse\\'+'CSV_4_SNCR\Pressure_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            factors=[]
+            NOs=[]
+            for row in reader:
+                #print(row)
+                try:
+                    Temperature=float(row[0])
+                    factor=float(row[1])
+                    NO=float(row[5])#here NO is present for NO2
+                    temperatures.append(Temperature)
+                    factors.append(factor)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x','D']
+            lgdArry=['p=1.0atm' ,'p=2.5atm','p=4.0atm','p=5.5atm','p=7.0atm','p=8.5atm']
+            jj=-1
+            dataPoint=[]
+            for j in [0,1,2,3,4,5]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(factors)) if abs(factors[i]-j*1.5-1)<10**-5])# the data can not be the value exacte,the range is necessary
+                NO_factor_j = np.array([NOs[i]/0.0002 for i in range(len(factors)) if abs(factors[i]-j*1.5-1)<10**-5])
+                f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=4)
+                dataPoint.append(ltmp)
+                plt.plot(temperature_new,f(temperature_new),'--',markersize=1)
+                
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO2 out/ NO in',fontsize='large')
+        plt.legend(handles=dataPoint,fontsize='large')
+        plt.show()
+    def Residtime_Fig(self):
+        with open( 'DataAnalyse\\'+'CSV_4_SNCR\ResidTime_New__ADD_ITL.csv','r') as f:
+            reader = csv.reader(f)
+            temperatures=[]
+            factors=[]
+            NOs=[]
+            for row in reader:
+                #print(row)
+                try:
+                    Temperature=float(row[1])
+                    factor=float(row[0])
+                    NO=float(row[4])#here NO is present for NO2
+                    temperatures.append(Temperature)
+                    factors.append(factor)
+                    NOs.append(NO)
+                except:
+                    continue
+            s=['s','^','*','p','x','D']
+            jj=-1
+            dataPoint=[]
+            lgdArry=('residence time 1.8s','residence time 0.9s','residence time 0.6s','residence time 0.45s','residence time 0.36s','residence time 0.3s')
+            for j in [0,1,2,3,4,5]:
+                jj=jj+1
+                temperature= np.array( [temperatures[i] for i in range(len(factors)) if abs(factors[i]-j*25-25)<10**-5])# the data can not be the value exacte,the range is necessary
+                NO_factor_j = np.array([NOs[i]/0.0002 for i in range(len(factors)) if abs(factors[i]-j*25-25)<10**-5])
+                f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
+
+                temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=8)
+                dataPoint.append(ltmp)
+                plt.plot(temperature_new,f(temperature_new),'--')
+                #plt.show()
+            # plt.hold(True)
+        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
+        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.legend(handles=dataPoint,fontsize='large')
+        plt.show()
+
+  
 if __name__=='__main__':
     figPlotter=plotData('large')
-    figPlotter.SNCR_AdditiveDetail()
+    figPlotter.verifyCaoQingXi()
+    figPlotter.H2_Fig()
+    figPlotter.H2O_Fig()
+    figPlotter.NO_NSR15_Fig()
+    figPlotter.NSR_Fig()
+    figPlotter.O2_Fig()
+    figPlotter.pressure_Fig()
+    figPlotter.pressure_NO2_Fig()
+    figPlotter.Residtime_Fig()
