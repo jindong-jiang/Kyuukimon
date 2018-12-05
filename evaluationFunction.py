@@ -113,9 +113,17 @@ class sncr4AllResidenceCalculator:
 
         self.diff2_NO = ((self.comparationList_NO_Detail-self.comparationList_NO_Overall)/fraction_NO_Overall_Reaction[0])**2
         self.diff2_NH3 = ((self.comparationList_NH3_Detail-self.comparationList_NH3_Overall)/fraction_NH3_Overall_Reaction[0])**2
+        
+        currentTime = time.strftime("%Y%m%d_%H%M%S")
+        df=pd.DataFrame(data={'Time':self.comparationListTime})
+        df1=pd.DataFrame(data={'NO_Overall':self.comparationList_NO_Overall,'NO_Detail':self.comparationList_NO_Detail})
+        df2=pd.DataFrame(data={'NH3_Overall':self.comparationList_NH3_Overall,'NH3_Detail':self.comparationList_NH3_Detail})
+        df3=pd.DataFrame(data={"Err_NO":self.diff2_NO,"Err_NH3":self.diff2_NH3})
+        dfToWrite=pd.concat([df,df1,df2,df3], axis=1)
+        dfToWrite.to_csv("DataAnalyse\\OverallForOneT\\"+str(self.temperatureValue)+"K"+"ResultOverallCompare.csv")
 
         if(draw):
-            currentTime = time.strftime("%Y%m%d_%H%M%S")
+            
             plt.figure()
             pic01=plt.plot(self.comparationListTime,self.comparationList_NO_Overall/self.comparationList_NO_Overall[0],'^',
                     self.comparationListTime,self.comparationList_NO_Detail/self.comparationList_NO_Detail[0],'-.',
@@ -650,9 +658,9 @@ class Additive_Analyse:
 
 
 if __name__=='__main__':
-    '''
+    
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]   
-    with open('lastBestResult.csv','r') as f:
+    with open('lastBestResultForspecificTempture.csv','r') as f:
         reader=csv.reader(f,quoting=csv.QUOTE_NONNUMERIC)    
         for row in reader:
             if len(row)==10:
@@ -664,21 +672,12 @@ if __name__=='__main__':
     # calculate the result for different operating condition
     '''
     listTemperature=np.linspace(500,1600,20)
-    '''
-    Coeficients=[40609356.32837867,4.591567103723157,59293.190204797174,
-            1.2500592750801196e+48,0.2384295271582183,227638.0184552551],
-            [2.1489719679116273,3.6556482376087636,14.912031071151327,
-            10.977243831448774,3.883371131587305,26418.321246185045],
-            [24605131153138.434,0.5423493881224208,0.5484230644458539,
-            865665.0299722904,3.380599012341277,26111.172189728528],
-            [5768579274.510609,0.6620741397171189,1422.3511582152546,
-            77603.57418676408,3.4672772057643466,43389.17261664884]
-    '''
+    
     Coeficients=[[16084827.893287595,2.587810040194352,23799.73019602423,
             1.2551668605210685e+19,1.3311990757391372,91991.52518245796]]
     calculatorTemperature=temperatureListDiffCalculator(listTemperature)
     for coeficient in Coeficients:
         result=calculatorTemperature.difference_Overall_Detail_temperature(coeficient,draw=True)
         print(result)
-    
+    '''
   
