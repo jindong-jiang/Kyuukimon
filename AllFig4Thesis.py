@@ -273,7 +273,7 @@ class plotData:
                 plt.plot(temperature_new,f(temperature_new),'--')
             # plt.hold(True)
         plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
+        plt.ylabel('[NO]out/[NO]in',fontsize='large')
         plt.legend(handles=DataPoint,fontsize='large')
         plt.show()
     def H2O_Fig(self):
@@ -535,16 +535,32 @@ class plotData:
         plt.ylabel('NO out/ NO in',fontsize='large')
         plt.legend(handles=dataPoint,fontsize='large')
         plt.show()
-
-  
+    def specificTemperatureFig(self):
+        for temperatureIter in np.linspace(1100.0,1700.0,7):
+            df1=pd.read_csv("DataAnalyse\\OverallForOneT\\{:.1f}KResultOverallCompare.csv".
+                            format(temperatureIter))
+            plt.figure()
+            plt.plot(df1['Time'],df1['NO_Overall']/df1['NO_Overall'].iloc[0],'^',df1['Time'],df1['NO_Detail']/df1['NO_Overall'].iloc[0],'--')
+            plt.plot(df1['Time'],df1['NH3_Overall']/df1['NH3_Overall'].iloc[0],'v',df1['Time'],df1['NH3_Detail']/df1['NH3_Overall'].iloc[0],'-.')
+            plt.xlabel('ResidentTime',fontsize='large')
+            plt.ylabel('[C]out/[C]in',fontsize='large')
+            plt.title("De NOx Result with Temperature {0:.2f}K".format(temperatureIter))
+            plt.legend(["NO: Overall Reaction","NO: Detail Reaction",
+            "NH3: Overall Reaction","NH3: Detail Reaction"])
+            plt.savefig("DataAnalyse\\Fig\\{:.0f}K_GA_Result.png".format(temperatureIter),bbox_inches='tight')
+            plt.show()
+            plt.close()
+            plt.figure()
+            pic02=plt.plot(df1['Time'],df1['Err_NO'],'--',
+                    df1['Time'],df1['Err_NH3'],'-.')
+            plt.xlabel('ResidentTime',fontsize='large')
+            plt.ylabel('Error',fontsize='large')
+            plt.title("Errors with Temperature {0:.2f}K".format(temperatureIter))
+            plt.legend(["NO Errors between Overall Reaction Detail Reaction",
+            "NH3 Errors between Overall Reaction Detail Reaction"])            
+            plt.savefig("DataAnalyse\\Fig\\{:.0f}K_GA_ResultErr.png".format(temperatureIter),bbox_inches='tight') 
+            plt.show()
+            plt.close()
 if __name__=='__main__':
     figPlotter=plotData('large')
-    figPlotter.verifyCaoQingXi()
-    figPlotter.H2_Fig()
-    figPlotter.H2O_Fig()
-    figPlotter.NO_NSR15_Fig()
-    figPlotter.NSR_Fig()
-    figPlotter.O2_Fig()
-    figPlotter.pressure_Fig()
-    figPlotter.pressure_NO2_Fig()
-    figPlotter.Residtime_Fig()
+    figPlotter.specificTemperatureFig()
