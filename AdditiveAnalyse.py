@@ -52,4 +52,5 @@ def TestAdditive(funEmployeNumber):
 
 
 if __name__=='__main__':
-    TestAdditive(2)
+    for i in [1,2]:
+        TestAdditive(i)

@@ -574,11 +574,12 @@ class Additive_Analyse:
         plt.ylabel("NO(out)/NO(in)")
         plt.xlabel("Temperature ($^\circ$C)")
         plt.savefig(os.path.join(ImageResult,self.speciesAdd+currentTime+'DeNOx.png'))
-        plt.show()
-        with open(self.speciesAdd+"TemperatureShift.csv","a+") as csvFile:
-            csvWriter=csv.writer(csvFile)
-            csvWriter.writerow(self.listAdd)
-            csvWriter.writerow(TemperatureShift)
+        plt.show()        
+        
+        df=pd.DataFrame(data={self.speciesAdd+"listAdd":self.listAdd,
+                        "TemperatureShift":TemperatureShift})
+        
+        df.to_csv("DataAnalyse\\Additive\\"+self.speciesAdd+"TemperatureShift{0:g}.csv".format(funEmploye))
 
     def Detail_Overall_withAdd(self,coeficientAddDict,funEmploye=1,draw=False):
         self.NH3_EndPoint_Overall=[]
@@ -633,8 +634,8 @@ class Additive_Analyse:
         df=pd.DataFrame(data=d)
         df1=pd.DataFrame(data={"temperatureListX":self.temperatureListX})
         df2=pd.DataFrame(data={self.speciesAdd+"listAdd":self.listAdd})
-        dfForAdditive=pd.concat([df,df1,df2], ignore_index=True, axis=1)
-        dfForAdditive.to_csv(self.speciesAdd+"ResultAdditiveCompare{0:g}.csv".format(funEmploye))
+        dfForAdditive=pd.concat([df,df1,df2], axis=1)
+        dfForAdditive.to_csv("DataAnalyse\\Additive\\"+self.speciesAdd+"ResultAdditiveCompare{0:g}.csv".format(funEmploye))
         if(draw):            
             currentTime = time.strftime("%Y%m%d_%H%M%S")    
             plt.figure()
