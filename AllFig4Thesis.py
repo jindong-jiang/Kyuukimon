@@ -561,6 +561,38 @@ class plotData:
             plt.savefig("DataAnalyse\\Fig\\{:.0f}K_GA_ResultErr.png".format(temperatureIter),bbox_inches='tight') 
             plt.show()
             plt.close()
+    def temperatureInterval(self):
+        df1=pd.read_csv("DataAnalyse\OverallReactionForAllT\ResultOverallCompareForAllTemperature.csv")     
+        temperature=df1['temperature'].dropna()
+        timeList=df1['Time'].dropna()
+        C_NO_Detail=df1['NO_Detail'].values.reshape(len(temperature),len(timeList))
+        C_NH3_Detail=df1['NH3_Detail'].values.reshape(len(temperature),len(timeList))
+        C_NO_Overall=df1.NO_Overall.values.reshape(len(temperature),len(timeList))
+        C_NH3_Overall=df1.NH3_Overall.values.reshape(len(temperature),len(timeList))
+        plt.figure()
+        plt.plot(temperature,C_NO_Detail[:,-1]/C_NO_Detail[0],'--',temperature,C_NO_Overall[:,-1]/C_NO_Detail[0],'*')
+        plt.plot(temperature,C_NO_Detail[:,-10]/C_NO_Detail[0],'-.',temperature,C_NO_Overall[:,-10]/C_NO_Detail[0],'^')
+        plt.plot(temperature,C_NO_Detail[:,-15]/C_NO_Detail[0],':',temperature,C_NO_Overall[:,-15]/C_NO_Detail[0],'v')
+        plt.xlabel("temperature(K)")
+        plt.ylabel("[NO](in)/[NO](out)")
+        plt.legend(["NO:Detail Reaction 0.6s","NO:Overall Reaction 0.6s",
+                    "NO:Detail Reaction 0.3s","NO:Overall Reaction 0.3s",
+                    "NO:Detail Reaction 0.15s","NO:Overall Reaction 0.15s",])
+        plt.savefig("DataAnalyse\\Fig\\temperatureIntervalNO.png",bbox_inches='tight') 
+        plt.show()
+        plt.close()
+        plt.figure()
+        plt.plot(temperature,C_NH3_Detail[:,-1]/C_NH3_Detail[0],'--',temperature,C_NH3_Overall[:,-1]/C_NH3_Detail[0],'*')
+        plt.plot(temperature,C_NH3_Detail[:,-10]/C_NH3_Detail[0],'-.',temperature,C_NH3_Overall[:,-10]/C_NH3_Detail[0],'^')
+        plt.plot(temperature,C_NH3_Detail[:,-15]/C_NH3_Detail[0],':',temperature,C_NH3_Overall[:,-15]/C_NH3_Detail[0],'v')
+        plt.xlabel("temperature(K)")
+        plt.ylabel("[NH3](in)/[NH3](out)")
+        plt.legend(["NH3:Detail Reaction 0.6s","NH3:Overall Reaction 0.6s",
+                    "NH3:Detail Reaction 0.3s","NH3:Overall Reaction 0.3s",
+                    "NH3:Detail Reaction 0.15s","NH3:Overall Reaction 0.15s",])    
+        plt.savefig("DataAnalyse\\Fig\\temperatureIntervalNH3.png",bbox_inches='tight') 
+        plt.show()    
+
 if __name__=='__main__':
     figPlotter=plotData('large')
-    figPlotter.specificTemperatureFig()
+    figPlotter.temperatureInterval()

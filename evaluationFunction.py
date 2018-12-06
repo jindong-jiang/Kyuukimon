@@ -248,7 +248,7 @@ class temperatureListDiffCalculator:
                                         startPosition=0.0 ,
                                         endTime = 0.05 ,   # End Time (sec)
                                         tempFile="test.inp")
-            ''' 
+            
             #for the plot          
             if  temperatureIter<1200:
                 Coeficients=[40609356.32837867,4.591567103723157,59293.190204797174,
@@ -256,7 +256,7 @@ class temperatureListDiffCalculator:
             if  temperatureIter>=1200:
                 Coeficients=[2.1489719679116273,3.6556482376087636,14.912031071151327,
                                 10.977243831448774,3.883371131587305,26418.321246185045]
-            '''
+            
             PyChemTB.generateChemInput(#1.49e19,0,3.6e5,1.2e15,0,3.4e5,
                                 Coeficients[0],Coeficients[1],Coeficients[2],Coeficients[3],Coeficients[4],Coeficients[5],
                                 tempFile=os.path.join(currentDir,"ChemInput_OverallReaction.inp"))
@@ -314,11 +314,12 @@ class temperatureListDiffCalculator:
             #----------3D Plot---------------#
             fig = plt.figure()
             ax3d = Axes3D(fig)
-            df=pd.DataFrame(data={'NO':self.NO_AllPoint_Detail_Temp_cmprList,'NH3':self.NH3_AllPoint_Detail_Temp_cmprList})
-            df1=pd.DataFrame(data={'Time':self.comparationListTime})
-            df2=pd.DataFrame(data={'temperature':self.temperatureListX})
-            dfToWrite=pd.concat([df,df1,df2], axis=1)
-            dfToWrite.to_csv(currentTime+"ResultOverallCompare.csv")
+            df=pd.DataFrame(data={'NO_Detail':self.NO_AllPoint_Detail_Temp_cmprList,'NH3_Detail':self.NH3_AllPoint_Detail_Temp_cmprList})
+            df1=pd.DataFrame(data={'NO_Overall':self.NO_AllPoint_Overall_Temp_cmprList,'NH3_Overall':self.NH3_AllPoint_Overall_Temp_cmprList})
+            df2=pd.DataFrame(data={'Time':self.comparationListTime})
+            df3=pd.DataFrame(data={'temperature':self.temperatureListX})
+            dfToWrite=pd.concat([df,df1,df2,df3], axis=1)
+            dfToWrite.to_csv("DataAnalyse\\OverallReactionForAllT\\ResultOverallCompareForAllTemperature.csv")
 
 
             C_NO_Detail=self.NO_AllPoint_Detail_Temp_cmprList.reshape(-1,self.timeListNumber)/fraction_NO_Overall_Reaction.iloc[0]
@@ -658,7 +659,7 @@ class Additive_Analyse:
 
 
 if __name__=='__main__':
-    
+    '''
     #Coeficients=[1e15,0,3e4,1e15,0,3e4]   
     with open('lastBestResultForspecificTempture.csv','r') as f:
         reader=csv.reader(f,quoting=csv.QUOTE_NONNUMERIC)    
@@ -679,5 +680,5 @@ if __name__=='__main__':
     for coeficient in Coeficients:
         result=calculatorTemperature.difference_Overall_Detail_temperature(coeficient,draw=True)
         print(result)
-    '''
+  
   
