@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import csv
+from scipy.optimize import curve_fit
 
 class plotData:
     def __init__(self,fontTaille):
@@ -592,7 +593,72 @@ class plotData:
                     "NH3:Detail Reaction 0.15s","NH3:Overall Reaction 0.15s",])    
         plt.savefig("DataAnalyse\\Fig\\temperatureIntervalNH3.png",bbox_inches='tight') 
         plt.show()    
+    def Additive_Overall_Fig(self):
+        species=['CH4','CO','H2']
+        methodeNum=[1,2]
+        for speciesX in species:
+            for iM in methodeNum:    
+                df1=pd.read_csv('DataAnalyse\\Additive\\'+speciesX+'ResultAdditiveCompare'+str(iM)+'.csv')
+                temperature=df1['temperatureListX'].dropna()
+                SpicieslistAdd=df1[speciesX+'listAdd'].dropna()
+                C_Detail=df1[speciesX+'Detail'].values.reshape(len(SpicieslistAdd),len(temperature))
+                C_Overall=df1[speciesX+'Overall'].values.reshape(len(SpicieslistAdd),len(temperature))
+                plt.figure()
+                symbol=['*','^','v']
+                lgd=[]
+                for i in np.arange(3):
+                    plt.plot(temperature,C_Detail[i,:]/C_Detail[i,0],'--',temperature,C_Overall[i,:]/C_Overall[i,0],symbol[i])
+                    lgd.append("NO:Detail Reaction "+speciesX+" {:.0f}uL/L".format(SpicieslistAdd[i]*1e6))
+                    lgd.append("NO:Overall Reaction "+speciesX+" {:.0f}uL/L".format(SpicieslistAdd[i]*1e6))
+                plt.xlabel("Temperature(K)")
+                plt.ylabel("[NO](in)/[NO](out)")
+                plt.legend(lgd)
+                plt.savefig("DataAnalyse\\Fig\\AdditiveOverall"+speciesX+"Methode"+str(iM)+".png",bbox_inches='tight')
+    def AdditiveTemperatureShift(self):
+        def func(x,a,b):
+            return a*np.log(b*x+1)
+    
+        def func1(x,a,b):
+            return a*x/(b+x)            
+
+        def AnalyseData(funEmployelist):
+            for speciesAdd in ['H2','CH4','CO']:
+                              
+                file1=pd.read_csv(speciesAdd+"TemperatureShift.csv",',',header=None)
+                cAdd=file1.iloc[0,:].values
+                TemperatureShift=file1.iloc[1,:].values
+                plt.figure()
+                plt.plot(cAdd*1e6,TemperatureShift,'*')
+                s=iter(["r--","b.--"])
+                for funEmploye in funEmployelist:  
+                    popt,pcov=curve_fit(funEmploye,cAdd,TemperatureShift)
+                    print("a {0:g} b {1:g} ".format(*popt,pcov))                                 
+                    plt.plot(cAdd*1e6,funEmploye(cAdd,*popt),next(s))
+                plt.xlabel("["+speciesAdd+"] (μL/L)")
+                plt.ylabel("Temperature Shift ($^\circ$C)")
+                plt.legend(["Data Calculated",'Fiting Curve 1','Fiting Curve 2'])                
+                plt.savefig("DataAnalyse\\Fig\\AdditiveOverall"+speciesAdd+"Methode.png",bbox_inches='tight')
+        funEmployeList=[func1,func]
+        AnalyseData(funEmployeList)
+    def GA_Convergence_Fig(self):
+        df=pd.read_csv("DataAnalyse\\OverallForOneT\\Convergence.csv",header=0)
+        listTemperature=[1100,1400,1600]
+        symbol=[":","-.","--"]
+        lgd=[]
+        for num,temperature in enumerate(listTemperature):
+            dfToAnalyse=df[abs(df["temperature"]-temperature)<1e-3]
+            iterSteps,errorData=dfToAnalyse["iterSteps"],dfToAnalyse["Error"]
+            plt.plot(iterSteps,errorData,symbol[num])
+            lgd.append(str(temperature)+"K")
+
+        
+        plt.legend(lgd)
+        plt.xlabel('step',fontsize='large')
+        plt.ylabel('Relative Error',fontsize='large')
+        plt.title('Convergence of Genetic Algorithm',fontsize='large')
+        plt.savefig("DataAnalyse\\Fig\\GA_Convergence.png",bbox_inches='tight')
+        plt.show()
 
 if __name__=='__main__':
     figPlotter=plotData('large')
-    figPlotter.temperatureInterval()
+    figPlotter.GA_Convergence_Fig()

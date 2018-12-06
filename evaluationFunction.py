@@ -579,7 +579,7 @@ class Additive_Analyse:
         df=pd.DataFrame(data={self.speciesAdd+"listAdd":self.listAdd,
                         "TemperatureShift":TemperatureShift})
         
-        df.to_csv("DataAnalyse\\Additive\\"+self.speciesAdd+"TemperatureShift{0:g}.csv".format(funEmploye))
+        df.to_csv("DataAnalyse\\Additive\\"+self.speciesAdd+"TemperatureShift.csv")
 
     def Detail_Overall_withAdd(self,coeficientAddDict,funEmploye=1,draw=False):
         self.NH3_EndPoint_Overall=[]
