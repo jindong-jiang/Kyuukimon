@@ -4,11 +4,15 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import csv
 from scipy.optimize import curve_fit
+ 
 
 class plotData:
     def __init__(self,fontTaille):
         self.fontTaille=fontTaille
-
+        self.axissize="medium"
+        self.lgdsize="medium"
+        self.mkrSize=5
+        
     def onlyAdditive(self):
         df=pd.read_csv("DataAnalyse\\"+"CSV_4_SNCR\\additive_detail.csv",header=0).drop_duplicates()
         add2=df[abs(df["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-9*(df["Reactant Fraction for CO2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-0.15))<10e-7]
@@ -31,33 +35,32 @@ class plotData:
             #This is to analysis the data of 0ppm
             f=interp1d(add2_0['Temperature C1 PFR PFR (C1)_(C)'],add2_0[indicator],kind='cubic')
             temperature_new=np.linspace(555,1250,num=90,endpoint=True)
-            plt.plot(add2_0['Temperature C1 PFR PFR (C1)_(C)'],add2_0[indicator],'*',temperature_new,f(temperature_new),'--')
+            plt.plot(temperature_new,f(temperature_new)/(200e-6),'o--',markersize=self.mkrSize)
 
             #For additive #1 NO
             #This is to analysis the data of 300ppm
             f=interp1d(add1_300['Temperature C1 PFR PFR (C1)_(C)'],add1_300[indicator],kind='cubic')
             temperature_new=np.linspace(555,1250,num=90,endpoint=True)
-            plt.plot(add1_300['Temperature C1 PFR PFR (C1)_(C)'],add1_300[indicator],'^',temperature_new,f(temperature_new),'--')
+            plt.plot(temperature_new,f(temperature_new)/(200e-6),'*--',markersize=self.mkrSize)
             #This is to analysis the data of 900ppm
             f=interp1d(add1_900['Temperature C1 PFR PFR (C1)_(C)'],add1_900[indicator],kind='cubic')
             temperature_new=np.linspace(555,1250,num=90,endpoint=True)
-            plt.plot(add1_900['Temperature C1 PFR PFR (C1)_(C)'],add1_900[indicator],'v',temperature_new,f(temperature_new),'--')
+            plt.plot(temperature_new,f(temperature_new)/(200e-6),'P--',markersize=self.mkrSize)
 
             #For additive #2  NO
             #This is to analysis the data of 300ppm
             f=interp1d(add2_300['Temperature C1 PFR PFR (C1)_(C)'],add2_300[indicator],kind='cubic')
             temperature_new=np.linspace(555,1250,num=90,endpoint=True)
-            plt.plot(add2_300['Temperature C1 PFR PFR (C1)_(C)'],add2_300[indicator],'s',temperature_new,f(temperature_new),'--')
+            plt.plot(temperature_new,f(temperature_new)/(200e-6),'d--',markersize=self.mkrSize)
             #This is to analysis the data of 900ppm
             f=interp1d(add2_900['Temperature C1 PFR PFR (C1)_(C)'],add2_900[indicator],kind='cubic')
             temperature_new=np.linspace(555,1250,num=90,endpoint=True)
-            plt.plot(add2_900['Temperature C1 PFR PFR (C1)_(C)'],add2_900[indicator],'D',temperature_new,f(temperature_new),'--')
-
-            plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-            plt.ylabel(indicator,fontsize='large')
-            plt.show()
-            plt.legend(['0ppm additive','','300ppm additive#1','','900ppm addtive #1','','300ppm additive#2','','900ppm additive#2',''],fontsize='large')
-
+            plt.plot(temperature_new,f(temperature_new)/(200e-6),'<--',markersize=self.mkrSize)
+            species=indicator.split(" ")[2]
+            plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+            plt.ylabel("["+species+"](out)/[NO](in)",fontsize=self.axissize)            
+            plt.legend(['0ppm additive','300ppm additive#1','900ppm addtive #1','300ppm additive#2','900ppm additive#2'],fontsize=self.lgdsize)
+            plt.savefig("DataAnalyse\\Fig\\"+indicator.replace(" ","")+".png",bbox_inches='tight')    
         draw_image(indicator='Mole fraction NO end point')
         draw_image(indicator='Mole fraction NO2 end point')
         draw_image(indicator='Mole fraction N2O end point')
@@ -661,4 +664,4 @@ class plotData:
 
 if __name__=='__main__':
     figPlotter=plotData('large')
-    figPlotter.GA_Convergence_Fig()
+    figPlotter.onlyAdditive()
