@@ -60,7 +60,8 @@ class plotData:
             plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
             plt.ylabel("["+species+"](out)/[NO](in)",fontsize=self.axissize)            
             plt.legend(['0ppm additive','300ppm additive#1','900ppm addtive #1','300ppm additive#2','900ppm additive#2'],fontsize=self.lgdsize)
-            plt.savefig("DataAnalyse\\Fig\\"+indicator.replace(" ","")+".png",bbox_inches='tight')    
+            plt.savefig("DataAnalyse\\Fig\\"+indicator.replace(" ","")+".png",bbox_inches='tight')   
+            plt.close()
         draw_image(indicator='Mole fraction NO end point')
         draw_image(indicator='Mole fraction NO2 end point')
         draw_image(indicator='Mole fraction N2O end point')
@@ -92,11 +93,12 @@ class plotData:
         temperature_new=np.linspace(555,1245,num=90,endpoint=True)
         plt.plot(df_CO_experiment['temperature'],df_CO_experiment['NOout/Noin']/100,'*',temperature_new,f(temperature_new)/0.0002,markersize=8)
 
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/NO in',fontsize='large')
-        plt.legend(['Experiment Result of CH4','Simulation Result of CH4','Experiment Result of H2','Simulation Result of H2','Experiment Result of CO','Simulation Result of CO'])
-        plt.title('DeNOx Result with different Additives')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize )
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(['Experiment Result of CH4','Simulation Result of CH4','Experiment Result of H2','Simulation Result of H2','Experiment Result of CO','Simulation Result of CO'],
+                    fontsize=self.lgdsize)
+        #plt.title('DeNOx Result with different Additives')
+        plt.savefig("DataAnalyse\\Fig\\verifyCaoQingxi1.png",bbox_inches='tight')
 
         df=pd.read_csv("DataAnalyse\\"+"CaoQingXi_Verifier\caoqingxi_300_900.csv",header=0)
         df.head()
@@ -104,9 +106,9 @@ class plotData:
         i=0
         for concenration in [0.0003,0.0009]:
             plt.figure()
-            plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-            plt.ylabel('NO out/ NO in',fontsize='large')
-            plt.title('DeNOx Result of SNCR with '+str(int(concenration*1e6*1.34))+"mg/m3"+" additive",fontsize='large')
+            plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+            plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+            #plt.title('DeNOx Result of SNCR with '+str(int(concenration*1e6*1.34))+"mg/m3"+" additive",fontsize='large')
             for species in ['CH4','CO']:
                 i=i+1
                 curve=df[df['Reactant Fraction for '+species+' C1 Inlet1 PFR (C1)_(mole_fraction)']==concenration]
@@ -116,9 +118,11 @@ class plotData:
 
                 df_exp=pd.read_csv("DataAnalyse\\"+"CaoQingXi_Verifier\\"+str(int(concenration*1e6))+"ppm"+species+'.csv',header=0)
                 plt.plot(df_exp['x'],df_exp['y'],s[i%2])
-            plt.legend(['CH4 Simulation','CH4 Experiment','CO Simulation','CO Experiment'])
-        plt.show()
+            plt.legend(['CH4 Simulation','CH4 Experiment','CO Simulation','CO Experiment'],fontsize=self.lgdsize)
+            plt.savefig("DataAnalyse\\Fig\\verifyCaoQingxi{:.0f}mg.png".format(concenration*1e6*1.34),bbox_inches='tight')
+        plt.close()
     def SNCR_AdditiveDetail(self):
+        
         df=pd.read_csv("DataAnalyse\\"+'CSV_4_SNCR\\SNCR_ADDITIVE_Detail.csv',header=0).drop_duplicates()
         df.count()
         add2=df[abs(df["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-9*(df["Reactant Fraction for CO2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-0.15))<10e-7]
@@ -147,12 +151,13 @@ class plotData:
                 for (velocity,NSR) in zip([75.0,50.0,25.0,75,75,75],[1.5,1.5,1.5,1.5,1.8,2]):
                     j=j+1
                     if j%3==1:
-                        #plt.figure()
+                        plt.figure()
                         lgd=[]
                         k+=1
-                        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-                        plt.ylabel(indicator,fontsize='large')
-                        plt.title('The Influence of'+Parameter_Study2[k%2] +'with'+' Additive#'+str(i+1),fontsize='large')
+                        ylbl="["+indicator.split(" ")[2]+"](out)/[NO](in)"
+                        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+                        plt.ylabel(ylbl,fontsize=self.axissize)
+                        #plt.title('The Influence of'+Parameter_Study2[k%2] +'with'+' Additive#'+str(i+1),fontsize='large')
                     for concentration in [0e-6,300e-6,900e-6]:
                         l+=1
                         dataSet=addx[(abs(addx['Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)']-concentration*fraction_H2[i])<10e-7) & \
@@ -160,16 +165,17 @@ class plotData:
                                     (abs(addx['Reactant Fraction for NH3 C1 Inlet1 PFR (C1)_(mole_fraction)']-0.0002*NSR)<10e-7) ].sort_values(by='Temperature C1 PFR PFR (C1)_(C)')
                         f=interp1d(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator],kind='cubic')
                         temperature_new=np.linspace(555,1250,num=90,endpoint=True)
-                        plt.plot(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator],symbol[j%3],temperature_new,f(temperature_new),symbol2[l%3])
+                        plt.plot(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator]/(200e-6),symbol[j%3],temperature_new,f(temperature_new)/(200e-6),symbol2[l%3],markersize=self.mkrSize)
                         #lgd.append('')
-                        lgd.append('additive='+str(concentration*10**6)+Parameter_Study[k%2]+eval(Parameter_Value[k%2])+Parameter_Value2[k%2])
-                        lgd.append('')
+                        #lgd.append('additive='+str(concentration*10**6)+Parameter_Study[k%2]+eval(Parameter_Value[k%2])+Parameter_Value2[k%2])
+                        #lgd.append('')
                     if j%3==0:
                         #plt.legend(lgd,fontsize='xx-small')                        
                         plt.savefig("DataAnalyse\\"+'Fig\\'+indicator+'addx'+str(i)+Parameter_Study2[k%2]+'result.png',bbox_inches='tight')
-                        plt.show()
+                        #plt.show()
                         plt.close()
     def CH4_Fig(self):
+        plt.figure()
         with open( "DataAnalyse\\"+'CSV_4_SNCR\CH4_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -197,17 +203,18 @@ class plotData:
                 f=interp1d(temperature[1:], NO_CH4_jppm[1:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
-                ltemp,=plt.plot(temperature,NO_CH4_jppm,s[jj],label=lgdArry[jj],markersize=7)
+                ltemp,=plt.plot(temperature,NO_CH4_jppm,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 DataPoint.append(ltemp)
                 plt.plot(temperature_new,f(temperature_new),'--')
         
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=DataPoint,fontsize='large')
-        plt.show()
-        #plt.savefig('CH4.eps',format="eps")            
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=DataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\CH4.png",bbox_inches='tight')            
     def CO_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+'CSV_4_SNCR\CO_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -235,16 +242,18 @@ class plotData:
                 f=interp1d(temperature[1:], NO_CO_0ppm[1:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
-                ltemp,=plt.plot(temperature,NO_CO_0ppm,s[jj],label=lgdArry[jj],markersize=7)
+                ltemp,=plt.plot(temperature,NO_CO_0ppm,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 DataPoint.append(ltemp)
                 plt.plot(temperature_new,f(temperature_new),'--')
                 
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=DataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=DataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\CO.png",bbox_inches='tight') 
     def H2_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+'CSV_4_SNCR\H2_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -272,15 +281,17 @@ class plotData:
                 f=interp1d(temperature[1:], NO_H2_0ppm[1:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
-                ltemp,=plt.plot(temperature,NO_H2_0ppm,s[jj],label=lgdArry[jj],markersize=7)
+                ltemp,=plt.plot(temperature,NO_H2_0ppm,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 DataPoint.append(ltemp)
                 plt.plot(temperature_new,f(temperature_new),'--')
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('[NO]out/[NO]in',fontsize='large')
-        plt.legend(handles=DataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=DataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\H2.png",bbox_inches='tight') 
     def H2O_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+'CSV_4_SNCR\H2O_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -308,16 +319,18 @@ class plotData:
                 f=interp1d(temperature[1:], NO_factor_j[1:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
-                ltemp,= plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=6)
+                ltemp,= plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 DataPoint.append(ltemp)
                 plt.plot( temperature_new,f(temperature_new),'--')
                 
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=DataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=DataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\H2O.png",bbox_inches='tight') 
     def NO_NSR15_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+r'CSV_4_SNCR\NO_NSR1.5_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -345,16 +358,18 @@ class plotData:
                 f=interp1d(temperature[1:], NO_factor_j[1:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[1],temperature[-1],num=90,endpoint=True)
-                ltmp , = plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=6)
+                ltmp , = plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 dataPoint.append(ltmp)
                 plt.plot(temperature_new,f(temperature_new),'--')
                 
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=dataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=dataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\NO_NSR1.5.png",bbox_inches='tight') 
     def NSR_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+r'CSV_4_SNCR\NSR_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -382,16 +397,18 @@ class plotData:
                 f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
-                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=6)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=mkrSize)
                 dataPoint.append(ltmp)
                 plt.plot(temperature_new,f(temperature_new),'--')
                 
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=dataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=dataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\NSR.png",bbox_inches='tight') 
     def O2_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+'CSV_4_SNCR\O2_NSR1.5_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -419,16 +436,18 @@ class plotData:
                 f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
-                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=7)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 dataPoint.append(ltmp)
                 plt.plot(temperature_new,f(temperature_new),'--')
                
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=dataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=dataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\O2.png",bbox_inches='tight') 
     def pressure_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+'CSV_4_SNCR\Pressure_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -456,16 +475,18 @@ class plotData:
                 f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
-                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=5)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 dataPoint.append(ltmp)
                 plt.plot(temperature_new,f(temperature_new),'--')
                
                 plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=dataPoint,fontsize='large') 
-        plt.show()   
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=dataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\pressureNO.png",bbox_inches='tight')   
     def pressure_NO2_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+'CSV_4_SNCR\Pressure_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -493,16 +514,18 @@ class plotData:
                 f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
-                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=4)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=5)
                 dataPoint.append(ltmp)
-                plt.plot(temperature_new,f(temperature_new),'--',markersize=1)
+                plt.plot(temperature_new,f(temperature_new),':',markersize=1)
                 
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO2 out/ NO in',fontsize='large')
-        plt.legend(handles=dataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO2](out)/[NO2](in)',fontsize=self.axissize)
+        plt.legend(handles=dataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\pressureNO2.png",bbox_inches='tight') 
     def Residtime_Fig(self):
+        plt.figure()
         with open( 'DataAnalyse\\'+'CSV_4_SNCR\ResidTime_New__ADD_ITL.csv','r') as f:
             reader = csv.reader(f)
             temperatures=[]
@@ -530,15 +553,16 @@ class plotData:
                 f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
-                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=8)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 dataPoint.append(ltmp)
                 plt.plot(temperature_new,f(temperature_new),'--')
                 #plt.show()
             # plt.hold(True)
-        plt.xlabel('Temperature ($^\circ$C)',fontsize='large')
-        plt.ylabel('NO out/ NO in',fontsize='large')
-        plt.legend(handles=dataPoint,fontsize='large')
-        plt.show()
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(handles=dataPoint,fontsize=self.lgdsize)
+        #plt.show()
+        plt.savefig("DataAnalyse\\Fig\\resTime.png",bbox_inches='tight') 
     def specificTemperatureFig(self):
         for temperatureIter in np.linspace(1100.0,1700.0,7):
             df1=pd.read_csv("DataAnalyse\\OverallForOneT\\{:.1f}KResultOverallCompare.csv".
@@ -546,28 +570,29 @@ class plotData:
             plt.figure()
             plt.plot(df1['Time'],df1['NO_Overall']/df1['NO_Overall'].iloc[0],'^',df1['Time'],df1['NO_Detail']/df1['NO_Overall'].iloc[0],'--')
             plt.plot(df1['Time'],df1['NH3_Overall']/df1['NH3_Overall'].iloc[0],'v',df1['Time'],df1['NH3_Detail']/df1['NH3_Overall'].iloc[0],'-.')
-            plt.xlabel('ResidentTime',fontsize='large')
-            plt.ylabel('[C]out/[C]in',fontsize='large')
-            plt.title("De NOx Result with Temperature {0:.2f}K".format(temperatureIter))
+            plt.xlabel('ResidenceTime(s)',fontsize=self.axissize)
+            plt.ylabel('[C](out)/[C](in)',fontsize=self.axissize)
+            #plt.title("De NOx Result with Temperature {0:.2f}K".format(temperatureIter))
             plt.legend(["NO: Overall Reaction","NO: Detail Reaction",
-            "NH3: Overall Reaction","NH3: Detail Reaction"])
-            plt.savefig("DataAnalyse\\Fig\\{:.0f}K_GA_Result.png".format(temperatureIter),bbox_inches='tight')
-            plt.show()
+            "NH3: Overall Reaction","NH3: Detail Reaction"],fontsize=self.lgdsize)
+            plt.savefig("DataAnalyse\\Fig\\{:.0f}K_GA_Result.png".format(temperatureIter-273.15),bbox_inches='tight')
+            #plt.show()
             plt.close()
             plt.figure()
             pic02=plt.plot(df1['Time'],df1['Err_NO'],'--',
                     df1['Time'],df1['Err_NH3'],'-.')
-            plt.xlabel('ResidentTime',fontsize='large')
-            plt.ylabel('Error',fontsize='large')
-            plt.title("Errors with Temperature {0:.2f}K".format(temperatureIter))
+            plt.xlabel('ResidenceTime(s)',fontsize=self.axissize)
+            plt.ylabel('Error',fontsize=self.axissize)
+            plt.gca().yaxis.get_major_formatter().set_powerlimits((0,1)) 
+            #plt.title("Errors with Temperature {0:.2f}K".format(temperatureIter))
             plt.legend(["NO Errors between Overall Reaction Detail Reaction",
-            "NH3 Errors between Overall Reaction Detail Reaction"])            
-            plt.savefig("DataAnalyse\\Fig\\{:.0f}K_GA_ResultErr.png".format(temperatureIter),bbox_inches='tight') 
-            plt.show()
+            "NH3 Errors between Overall Reaction Detail Reaction"],fontsize=self.lgdsize)            
+            plt.savefig("DataAnalyse\\Fig\\{:.0f}C_GA_ResultErr.png".format(temperatureIter-273.15),bbox_inches='tight') 
+            #plt.show()
             plt.close()
     def temperatureInterval(self):
         df1=pd.read_csv("DataAnalyse\OverallReactionForAllT\ResultOverallCompareForAllTemperature.csv")     
-        temperature=df1['temperature'].dropna()
+        temperature=df1['temperature'].dropna()-273
         timeList=df1['Time'].dropna()
         C_NO_Detail=df1['NO_Detail'].values.reshape(len(temperature),len(timeList))
         C_NH3_Detail=df1['NH3_Detail'].values.reshape(len(temperature),len(timeList))
@@ -577,32 +602,32 @@ class plotData:
         plt.plot(temperature,C_NO_Detail[:,-1]/C_NO_Detail[0],'--',temperature,C_NO_Overall[:,-1]/C_NO_Detail[0],'*')
         plt.plot(temperature,C_NO_Detail[:,-10]/C_NO_Detail[0],'-.',temperature,C_NO_Overall[:,-10]/C_NO_Detail[0],'^')
         plt.plot(temperature,C_NO_Detail[:,-15]/C_NO_Detail[0],':',temperature,C_NO_Overall[:,-15]/C_NO_Detail[0],'v')
-        plt.xlabel("temperature(K)")
-        plt.ylabel("[NO](in)/[NO](out)")
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel("[NO](in)/[NO](out)",fontsize=self.axissize)
         plt.legend(["NO:Detail Reaction 0.6s","NO:Overall Reaction 0.6s",
                     "NO:Detail Reaction 0.3s","NO:Overall Reaction 0.3s",
-                    "NO:Detail Reaction 0.15s","NO:Overall Reaction 0.15s",])
+                    "NO:Detail Reaction 0.15s","NO:Overall Reaction 0.15s",],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\temperatureIntervalNO.png",bbox_inches='tight') 
-        plt.show()
+        #plt.show()
         plt.close()
         plt.figure()
         plt.plot(temperature,C_NH3_Detail[:,-1]/C_NH3_Detail[0],'--',temperature,C_NH3_Overall[:,-1]/C_NH3_Detail[0],'*')
         plt.plot(temperature,C_NH3_Detail[:,-10]/C_NH3_Detail[0],'-.',temperature,C_NH3_Overall[:,-10]/C_NH3_Detail[0],'^')
         plt.plot(temperature,C_NH3_Detail[:,-15]/C_NH3_Detail[0],':',temperature,C_NH3_Overall[:,-15]/C_NH3_Detail[0],'v')
-        plt.xlabel("temperature(K)")
-        plt.ylabel("[NH3](in)/[NH3](out)")
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel("[NH3](in)/[NH3](out)",fontsize=self.axissize)
         plt.legend(["NH3:Detail Reaction 0.6s","NH3:Overall Reaction 0.6s",
                     "NH3:Detail Reaction 0.3s","NH3:Overall Reaction 0.3s",
-                    "NH3:Detail Reaction 0.15s","NH3:Overall Reaction 0.15s",])    
+                    "NH3:Detail Reaction 0.15s","NH3:Overall Reaction 0.15s",],fontsize=self.lgdsize)    
         plt.savefig("DataAnalyse\\Fig\\temperatureIntervalNH3.png",bbox_inches='tight') 
-        plt.show()    
+        #plt.show()    
     def Additive_Overall_Fig(self):
         species=['CH4','CO','H2']
         methodeNum=[1,2]
         for speciesX in species:
             for iM in methodeNum:    
                 df1=pd.read_csv('DataAnalyse\\Additive\\'+speciesX+'ResultAdditiveCompare'+str(iM)+'.csv')
-                temperature=df1['temperatureListX'].dropna()
+                temperature=df1['temperatureListX'].dropna()-273
                 SpicieslistAdd=df1[speciesX+'listAdd'].dropna()
                 C_Detail=df1[speciesX+'Detail'].values.reshape(len(SpicieslistAdd),len(temperature))
                 C_Overall=df1[speciesX+'Overall'].values.reshape(len(SpicieslistAdd),len(temperature))
@@ -611,11 +636,11 @@ class plotData:
                 lgd=[]
                 for i in np.arange(3):
                     plt.plot(temperature,C_Detail[i,:]/C_Detail[i,0],'--',temperature,C_Overall[i,:]/C_Overall[i,0],symbol[i])
-                    lgd.append("NO:Detail Reaction "+speciesX+" {:.0f}uL/L".format(SpicieslistAdd[i]*1e6))
-                    lgd.append("NO:Overall Reaction "+speciesX+" {:.0f}uL/L".format(SpicieslistAdd[i]*1e6))
-                plt.xlabel("Temperature(K)")
-                plt.ylabel("[NO](in)/[NO](out)")
-                plt.legend(lgd)
+                    lgd.append("NO:Detail Reaction "+speciesX+" {:.0f}μL/L".format(SpicieslistAdd[i]*1e6))
+                    lgd.append("NO:Overall Reaction "+speciesX+" {:.0f}μL/L".format(SpicieslistAdd[i]*1e6))
+                plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+                plt.ylabel("[NO](in)/[NO](out)",fontsize=self.axissize)
+                plt.legend(lgd,fontsize=self.lgdsize)
                 plt.savefig("DataAnalyse\\Fig\\AdditiveOverall"+speciesX+"Methode"+str(iM)+".png",bbox_inches='tight')
     def AdditiveTemperatureShift(self):
         def func(x,a,b):
@@ -637,9 +662,9 @@ class plotData:
                     popt,pcov=curve_fit(funEmploye,cAdd,TemperatureShift)
                     print("a {0:g} b {1:g} ".format(*popt,pcov))                                 
                     plt.plot(cAdd*1e6,funEmploye(cAdd,*popt),next(s))
-                plt.xlabel("["+speciesAdd+"] (μL/L)")
-                plt.ylabel("Temperature Shift ($^\circ$C)")
-                plt.legend(["Data Calculated",'Fiting Curve 1','Fiting Curve 2'])                
+                plt.xlabel("["+speciesAdd+"](μL/L)",fontsize=self.axissize)
+                plt.ylabel("Temperature Shift ($^\circ$C)",fontsize=self.axissize)
+                plt.legend(["Data Calculated",'Fiting Curve 1','Fiting Curve 2'],fontsize=self.lgdsize)                
                 plt.savefig("DataAnalyse\\Fig\\AdditiveOverall"+speciesAdd+"Methode.png",bbox_inches='tight')
         funEmployeList=[func1,func]
         AnalyseData(funEmployeList)
@@ -648,20 +673,40 @@ class plotData:
         listTemperature=[1100,1400,1600]
         symbol=[":","-.","--"]
         lgd=[]
+        plt.figure()
         for num,temperature in enumerate(listTemperature):
             dfToAnalyse=df[abs(df["temperature"]-temperature)<1e-3]
             iterSteps,errorData=dfToAnalyse["iterSteps"],dfToAnalyse["Error"]
             plt.plot(iterSteps,errorData,symbol[num])
-            lgd.append(str(temperature)+"K")
+            lgd.append(str(temperature-273.15)+"$^\circ$C")
 
         
-        plt.legend(lgd)
-        plt.xlabel('step',fontsize='large')
-        plt.ylabel('Relative Error',fontsize='large')
-        plt.title('Convergence of Genetic Algorithm',fontsize='large')
+        plt.legend(lgd,fontsize=self.lgdsize)
+        plt.xlabel('Step',fontsize=self.axissize)
+        plt.ylabel('Relative Error',fontsize=self.axissize)
+        #plt.title('Convergence of Genetic Algorithm',fontsize='large')
         plt.savefig("DataAnalyse\\Fig\\GA_Convergence.png",bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
 if __name__=='__main__':
     figPlotter=plotData('large')
     figPlotter.onlyAdditive()
+    figPlotter.verifyCaoQingXi()
+    figPlotter.SNCR_AdditiveDetail()
+    
+    figPlotter.CH4_Fig()
+    figPlotter.CO_Fig()
+    figPlotter.H2_Fig()
+    figPlotter.H2O_Fig()
+    figPlotter.NO_NSR15_Fig()
+    figPlotter.O2_Fig()
+    figPlotter.pressure_Fig()
+    figPlotter.pressure_NO2_Fig()
+    figPlotter.Residtime_Fig()
+    
+    figPlotter.specificTemperatureFig()
+    figPlotter.temperatureInterval()
+    figPlotter.Additive_Overall_Fig()
+    figPlotter.AdditiveTemperatureShift()
+    figPlotter.GA_Convergence_Fig()
+
