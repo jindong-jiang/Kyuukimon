@@ -66,6 +66,73 @@ class plotData:
         draw_image(indicator='Mole fraction NO2 end point')
         draw_image(indicator='Mole fraction N2O end point')
         draw_image(indicator='Mole fraction NH3 end point')       
+    def Additive_NSR0(self):
+        df=pd.read_csv('DataAnalyse\CSV_4_SNCR\SNCR_NSR=0_T100.csv',header=0).drop_duplicates()
+        df.count()
+        add2=df[abs(df["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-9.0*(df["Reactant Fraction for CO2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-0.15))<10e-6]
+        add2.count()
+        add1=df[abs(df["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-34.0/31.0*(df["Reactant Fraction for CO2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-0.15))<10e-7]
+        #here we can not write 34/31, the python will take this as 1
+        #add1[add1["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]==0].count()
+        add1.count()
+        h2_add1=np.linspace(0.000102,0.002754,num=14).tolist()
+        h2_add1.insert(0,0)# the first time I used h2_add1=h2_add1.inset, but it doesn t work, the result is not in the return value of insert
+        h2_add1=np.asarray(h2_add1[1:14:3])
+        h2_add2=np.linspace(0.27*3e-4,0.27*8.1e-3,num=14).tolist()
+        h2_add2.insert(0,0)# the first time I used h2_add1=h2_add1.inset, but it doesn t work, the result is not in the return value of insert
+        #h2_add2=np.asarray(h2_add2[1:14:3])
+        h2_add2=np.asarray([0,0.000081,0.000243,0.000405,0.000567,0.000729,0.000891,0.001053,0.001215,0.001377,0.001539,0.001701,0.001863, \
+                            0.002025,0.002187][1:14:3])
+        h2_percentage=[0.34,0.27]
+        symbol=['s','^','o','*','v','d','1']
+        k=0
+        for i in [0,1]:
+            addx=[add1,add2][i]
+            h2_addx=[h2_add1,h2_add2][i]
+            addx['Mole_Fraction_NOx']=addx['Mole fraction NO2 end point']+addx['Mole fraction NO end point']+addx['Mole fraction N2O end point']
+            for indicator in ['Mole fraction NO end point','Mole fraction NO2 end point','Mole fraction N2O end point','Mole_Fraction_NOx']:
+                plt.figure()
+                plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+                try:
+                    ylbl="["+indicator.split(" ")[2]+"](out)/[NO](in)"
+                except:
+                    ylbl="["+indicator.split("_")[2]+"](out)/[NO](in)"
+                plt.ylabel(ylbl,fontsize=self.axissize)
+                lgd=[]
+                for h2 in h2_addx:
+                    
+                    k=k+1
+                    dataSet=addx[abs(addx['Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)']-h2)<10e-6]
+                    f=interp1d(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator],kind='slinear')
+                    temperature_new=np.linspace(100,1240,num=90,endpoint=True)
+                    plt.plot(temperature_new,f(temperature_new)/(200e-6),symbol[k%7]+'--',markersize=self.mkrSize-2)
+                    lgd.append('Addtive#'+str(i+1)+'='+"{:.4f}".format(h2/h2_percentage[i]))                    
+                plt.legend(lgd,fontsize=self.lgdsize)
+                plt.savefig("DataAnalyse\\Fig\\"+ylbl.replace("/","")+".png",bbox_inches='tight')
+        df2=pd.read_csv(r'DataAnalyse\CSV_4_SNCR\NSR_New__ADD_ITL.csv',header=0)
+        df2['Mole Fraction NOx']=df2['Mole fraction NO2 end point']+df2['Mole fraction NO end point']+df2['Mole fraction N2O end point']
+        symbol=['s','^','o','*','v','d','1']
+        l=0
+        for indicator in ['Mole fraction NO end point','Mole fraction NO2 end point','Mole fraction N2O end point','Mole Fraction NOx']:
+            plt.figure()
+            plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+            try:
+                ylbl="["+indicator.split(" ")[2]+"](out)/[NO](in)"
+            except:
+                ylbl="["+indicator.split("_")[2]+"](out)/[NO](in)"
+            plt.ylabel(ylbl,fontsize=self.axissize)
+            lgd=[]
+            for j in np.array([0,1,2,3,4]):
+                l+=1
+                dataSet=df2[abs(df2['Reactant Fraction for NH3 C1 Inlet1 PFR (C1)_(mole_fraction)']-0.00012*j)<10e-7].drop_duplicates()
+                f=interp1d(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator],kind='cubic')
+                temperature_new=np.linspace(550,1250,num=90,endpoint=True)
+                plt.plot(temperature_new,f(temperature_new)/(200e-6),symbol[l%6]+'--',markersize=self.mkrSize-2)
+                lgd.append('NSR='+"{:.1f}".format(j*0.00012/0.0002)+":"+"NH3="+str(j*0.00012))                
+            plt.legend(lgd,fontsize=self.axissize)
+            plt.savefig("DataAnalyse\\Fig\\"+ylbl.replace("/","_")+".png",bbox_inches='tight')
+            plt.close()
+
     def verifyCaoQingXi(self):        
         symbol=iter(['^','s'])
         s=['-.','--']
@@ -82,7 +149,7 @@ class plotData:
 
             f=interp1d(df['Temperature C1 PFR PFR (C1)_(C)'],df['Mole fraction NO end point'],kind='cubic')
             temperature_new=np.linspace(555,1245,num=90,endpoint=True)
-            plt.plot(df_experiment['Temperature_K']-273.15--correct[iC],df_experiment['NO']*10**(-6)/initialCncntrtn[iC], next(symbol),temperature_new,f(temperature_new)/initialCncntrtn[iC],s[iC],markersize=8)
+            plt.plot(df_experiment['Temperature_K']-273.15--correct[iC],df_experiment['NO']*10**(-6)/initialCncntrtn[iC], next(symbol),temperature_new,f(temperature_new)/initialCncntrtn[iC],s[iC],markersize=self.mkrSize)
             iC=iC+1
         df_CO=pd.read_csv("DataAnalyse\\"+"CSV_4_SNCR\\LiDe-longYangMeiPapersTestify\CO.csv",header=0).drop_duplicates()
         df_CO.head()
@@ -91,7 +158,7 @@ class plotData:
         df_CO_experiment=pd.read_csv("DataAnalyse\\"+"CSV_4_SNCR\\LiDe-longYangMeiPapersTestify\CO.csv",header=0).drop_duplicates()
         f=interp1d(df_CO_Simulation['Temperature C1 PFR PFR (C1)_(C)'],df_CO_Simulation['Mole fraction NO end point'],kind='cubic')
         temperature_new=np.linspace(555,1245,num=90,endpoint=True)
-        plt.plot(df_CO_experiment['temperature'],df_CO_experiment['NOout/Noin']/100,'*',temperature_new,f(temperature_new)/0.0002,markersize=8)
+        plt.plot(df_CO_experiment['temperature'],df_CO_experiment['NOout/Noin']/100,'*',temperature_new,f(temperature_new)/0.0002,markersize=self.mkrSize)
 
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize )
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
@@ -687,9 +754,10 @@ class plotData:
         #plt.title('Convergence of Genetic Algorithm',fontsize='large')
         plt.savefig("DataAnalyse\\Fig\\GA_Convergence.png",bbox_inches='tight')
         #plt.show()
-
+    
 if __name__=='__main__':
     figPlotter=plotData('large')
+    
     figPlotter.onlyAdditive()
     figPlotter.verifyCaoQingXi()
     figPlotter.SNCR_AdditiveDetail()
@@ -709,4 +777,5 @@ if __name__=='__main__':
     figPlotter.Additive_Overall_Fig()
     figPlotter.AdditiveTemperatureShift()
     figPlotter.GA_Convergence_Fig()
-
+    
+    figPlotter.Additive_NSR0()
