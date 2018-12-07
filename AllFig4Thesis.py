@@ -77,14 +77,14 @@ class plotData:
         add1.count()
         h2_add1=np.linspace(0.000102,0.002754,num=14).tolist()
         h2_add1.insert(0,0)# the first time I used h2_add1=h2_add1.inset, but it doesn t work, the result is not in the return value of insert
-        h2_add1=np.asarray(h2_add1[1:14:3])
+        h2_add1=np.asarray(h2_add1[0:14:2])[[0,1,2,4,6]]
         h2_add2=np.linspace(0.27*3e-4,0.27*8.1e-3,num=14).tolist()
         h2_add2.insert(0,0)# the first time I used h2_add1=h2_add1.inset, but it doesn t work, the result is not in the return value of insert
         #h2_add2=np.asarray(h2_add2[1:14:3])
         h2_add2=np.asarray([0,0.000081,0.000243,0.000405,0.000567,0.000729,0.000891,0.001053,0.001215,0.001377,0.001539,0.001701,0.001863, \
-                            0.002025,0.002187][1:14:3])
+                            0.002025,0.002187][0:14:2])[[0,1,2,4,6]]
         h2_percentage=[0.34,0.27]
-        symbol=['s','^','o','*','v','d','1']
+        symbol=['s','^','o','*','v','d','p']
         k=0
         for i in [0,1]:
             addx=[add1,add2][i]
@@ -132,7 +132,41 @@ class plotData:
             plt.legend(lgd,fontsize=self.axissize)
             plt.savefig("DataAnalyse\\Fig\\"+ylbl.replace("/","_")+".png",bbox_inches='tight')
             plt.close()
-
+    def Additive_NSR_different(self):
+        df=pd.read_csv('DataAnalyse\\CSV_4_SNCR\\NSR=06_1_12_Additive.csv',header=0).drop_duplicates()
+        df['Mole Fraction NOx']=df['Mole fraction NO2 end point']+df['Mole fraction NO end point']+df['Mole fraction N2O end point']
+        df.count()
+        add2=df[abs(df["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-9.0*(df["Reactant Fraction for CO2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-0.15))<10e-7]
+        add2.count()
+        add1=df[abs(df["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-34.0/31.0*(df["Reactant Fraction for CO2 C1 Inlet1 PFR (C1)_(mole_fraction)"]-0.15))<10e-7]
+        #here we can not write 34/31, the python will take this as 1
+        #add1[add1["Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)"]==0].count()
+        
+        symbol=['p','^','X','*','v','s','P','o']
+        for i in [1,2]:
+            addx=[add1,add2][i-1]
+            H2_Initial=[0.000408,0.000324][i-1]
+            for NSR in [0.6,1,1.2]:
+                for indicator in ['Mole fraction NO end point','Mole fraction NO2 end point','Mole fraction N2O end point','Mole fraction NH3 end point','Mole Fraction NOx']:
+                    plt.figure()
+                    plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+                    try:
+                        ylbl="["+indicator.split(" ")[2]+"](out)/[NO](in)"
+                    except:
+                        ylbl="["+indicator.split("_")[2]+"](out)/[NO](in)"
+                    plt.ylabel(ylbl,fontsize=self.axissize)
+                    
+                    #plt.title('NSR='+str(NSR))
+                    lgd=[]
+                    for j in [0,1,2,4,7]:
+                        dataSet=addx[(addx['Reactant Fraction for NH3 C1 Inlet1 PFR (C1)_(mole_fraction)']==NSR*0.0002) & (abs(addx['Reactant Fraction for H2 C1 Inlet1 PFR (C1)_(mole_fraction)']-H2_Initial*j)<10e-7)]
+                        f=interp1d(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator],kind='cubic')
+                        temperature_new=np.linspace(100,1240,num=90,endpoint=True)
+                        plt.plot(temperature_new,f(temperature_new)/(200e-6),symbol[j]+'--',markersize=4)
+                        lgd.append('Addtive#'+str(i)+'='+str(0.0012*j))                        
+                    plt.legend(lgd,fontsize=self.lgdsize)
+                    plt.savefig('DataAnalyse\\Fig\\NSR'+str(NSR)+ylbl.replace("/","_")+".png",bbox_inches='tight')
+                    plt.close()
     def verifyCaoQingXi(self):        
         symbol=iter(['^','s'])
         s=['-.','--']
@@ -259,7 +293,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x']
+            s=['s','^','*','p','X']
             lgdArry=['0mg/m3 CH4','402mg/m3 CH4','804mg/m3 CH4','1206mg/m3 CH4','1608mg/m3 CH4']
             DataPoint=[]
             jj=-1
@@ -298,7 +332,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x']
+            s=['s','^','*','p','X']
             lgdArry=['0mg/m3 CO','402mg/m3 CO','804mg/m3 CO','1206mg/m3 CO','1608mg/m3 CO']
             jj=-1
             DataPoint=[]
@@ -337,7 +371,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x']
+            s=['s','^','*','p','X']
             lgdArry=['0mg/m3 H2','402mg/m3 H2','804mg/m3 H2','1206mg/m3 H2','1608mg/m3 H2']
             DataPoint=[]
             jj=-1
@@ -375,7 +409,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x','D']
+            s=['s','^','*','p','X','D']
             lgdArry=['0% H2O' ,'2% H2O' ,'4% H2O' ,'6% H2O' ,'8% H2O' ,'10% H2O' ]
             jj=-1
             DataPoint=[]
@@ -414,7 +448,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x','D']
+            s=['s','^','*','p','X','D']
             jj=-1
             lgdArry=['134mg/m3 NO' ,'509mg/m3 NO' ,'884mg/m3 NO' ,'1259mg/m3 NO' ,'1634mg/m3 NO' ,'2010mg/m3 NO']
             dataPoint=[]
@@ -453,7 +487,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x','D']
+            s=['s','^','*','p','X','D']
             jj=-1
             dataPoint=[]
             lgdArry=['NSR=0','NSR=0.6','NSR=1.2','NSR=1.8','NSR=2.4','NSR=3.0']
@@ -492,7 +526,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x','D']
+            s=['s','^','*','p','X','D']
             jj=-1
             lgdArry=['O2 0%' ,'O2 10%','O2 20%','O2 30%','O2 40%','O2 50%']
             dataPoint=[]
@@ -531,7 +565,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x','D']
+            s=['s','^','*','p','X','D']
             jj=-1
             lgdArry=['p=1atm' ,'p=2.5atm','p=4atm','p=5.5atm','p=7atm','p=8.5atm']
             dataPoint=[]
@@ -570,7 +604,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x','D']
+            s=['s','^','*','p','X','D']
             lgdArry=['p=1.0atm' ,'p=2.5atm','p=4.0atm','p=5.5atm','p=7.0atm','p=8.5atm']
             jj=-1
             dataPoint=[]
@@ -609,7 +643,7 @@ class plotData:
                     NOs.append(NO)
                 except:
                     continue
-            s=['s','^','*','p','x','D']
+            s=['s','^','*','p','X','D']
             jj=-1
             dataPoint=[]
             lgdArry=('residence time 1.8s','residence time 0.9s','residence time 0.6s','residence time 0.45s','residence time 0.36s','residence time 0.3s')
@@ -758,9 +792,10 @@ class plotData:
 if __name__=='__main__':
     figPlotter=plotData('large')
     
-    figPlotter.onlyAdditive()
+    
+    
     figPlotter.verifyCaoQingXi()
-    figPlotter.SNCR_AdditiveDetail()
+    
     
     figPlotter.CH4_Fig()
     figPlotter.CO_Fig()
@@ -772,10 +807,16 @@ if __name__=='__main__':
     figPlotter.pressure_NO2_Fig()
     figPlotter.Residtime_Fig()
     
+    figPlotter.Additive_NSR0()    
+    figPlotter.Additive_NSR_different()
+    figPlotter.onlyAdditive()
+    figPlotter.SNCR_AdditiveDetail()
+
+    figPlotter.GA_Convergence_Fig()
     figPlotter.specificTemperatureFig()
     figPlotter.temperatureInterval()
     figPlotter.Additive_Overall_Fig()
     figPlotter.AdditiveTemperatureShift()
-    figPlotter.GA_Convergence_Fig()
     
-    figPlotter.Additive_NSR0()
+    
+    
