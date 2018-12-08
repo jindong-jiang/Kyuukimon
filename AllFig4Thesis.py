@@ -498,7 +498,7 @@ class plotData:
                 f=interp1d(temperature[0:], NO_factor_j[0:],kind='cubic')# the 2 minimum values can not be the same
 
                 temperature_new=np.linspace(temperature[0],temperature[-1],num=90,endpoint=True)
-                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=mkrSize)
+                ltmp,=plt.plot(temperature,NO_factor_j,s[jj],label=lgdArry[jj],markersize=self.mkrSize)
                 dataPoint.append(ltmp)
                 plt.plot(temperature_new,f(temperature_new),'--')
                 
@@ -741,6 +741,7 @@ class plotData:
                     lgd.append("NO:Overall Reaction "+speciesX+" {:.0f}μL/L".format(SpicieslistAdd[i]*1e6))
                 plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
                 plt.ylabel("[NO](in)/[NO](out)",fontsize=self.axissize)
+                plt.ylim(0,2.2)
                 plt.legend(lgd,fontsize=self.lgdsize)
                 plt.savefig("DataAnalyse\\Fig\\AdditiveOverall"+speciesX+"Methode"+str(iM)+".png",bbox_inches='tight')
     def AdditiveTemperatureShift(self):
@@ -788,10 +789,85 @@ class plotData:
         #plt.title('Convergence of Genetic Algorithm',fontsize='large')
         plt.savefig("DataAnalyse\\Fig\\GA_Convergence.png",bbox_inches='tight')
         #plt.show()
-    
+    def SynGasExp(self):
+        plt.figure()
+        data={}
+        with pd.ExcelFile(r'DataAnalyse\Additive\data2ResultSynGasSNCR2.xlsx') as xls:
+            data['df_1_600'] = pd.read_excel(xls, '合成气1,600ppm',usecols=[0, 2])
+            data['df_1_1200'] = pd.read_excel(xls, '合成气1,1200ppm',usecols=[0, 2])
+            data['CO1H21']=pd.read_excel(xls,'CO1H21',usecols=[0,2])
+            data['H21CH41']=pd.read_excel(xls,'H21CH41',usecols=[0,2])
+            data['H23CH41']=pd.read_excel(xls,'H23CH41',usecols=[0,2])
+        symbol=iter(['--',':','*','^','v'])
+        for datatoplot in data:
+            plt.plot(data[datatoplot].iloc[:,0],data[datatoplot].iloc[:,1],next(symbol))
+        #plt.xlim((550,1100))
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(['Simulation 600μL/L Syngas#1','Simulation 600μL/L Syngas#1',
+                    'Experiment CO:H2=1:1','Experiment H2:CH4=1:1','Experiment H2:CH4=3:1'],fontsize=self.lgdsize)
+        plt.savefig("DataAnalyse\\Fig\\syngasQing1.png",bbox_inches='tight')
+        plt.figure()
+        data={}
+        with pd.ExcelFile(r'DataAnalyse\Additive\data2ResultSynGasSNCR2.xlsx') as xls:
+            data['df_2_600'] = pd.read_excel(xls, '合成气2,600ppm',usecols=[0, 2])
+            data['df_2_1200'] = pd.read_excel(xls, '合成气2,1200ppm',usecols=[0, 2])
+            data['CO1H21']=pd.read_excel(xls,'CO1H21',usecols=[0,2])
+            data['CO3H21']=pd.read_excel(xls,'CO3H21',usecols=[0,2])
+            
+        symbol=iter(['--',':','*','^','v'])
+        for datatoplot in data:
+            plt.plot(data[datatoplot].iloc[:,0],data[datatoplot].iloc[:,1],next(symbol))
+        #plt.xlim((550,1100))
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(['Simulation 600μL/L Syngas#2','Simulation 600μL/L Syngas#2',
+                    'Experiment CO:H2=1:1','Experiment CO:H2=3:1'],fontsize=self.lgdsize)
+        plt.savefig("DataAnalyse\\Fig\\syngasQing2.png",bbox_inches='tight')
+
+        plt.figure()
+        data={}
+        with pd.ExcelFile(r'DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx') as xls:
+            data['exp_1_900'] = pd.read_excel(xls, '合成气1,900ppm ',usecols=[0, 2])
+            data['smlt_1_900']=pd.read_excel(xls, '合成气1,900ppm ',usecols=[3, 5])
+            data['exp_1_300'] = pd.read_excel(xls, '合成气1,300ppm',usecols=[0, 2])
+            data['smlt_1_300']=pd.read_excel(xls, '合成气1,300ppm',usecols=[4, 6])
+            data['exp_1_000'] = pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[0, 2])
+            data['smlt_1_000']=pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[3, 5])
+        
+          
+        symbol=iter(['s','--','^',':','*','-.'])
+        for datatoplot in data:
+            plt.plot(data[datatoplot].iloc[:,0],data[datatoplot].iloc[:,1],next(symbol))
+        #plt.xlim((550,1100))
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(['Simulation 900μL/L Syngas#1','Experiment 900μL/L Syngas#1',
+                    'Simulation 300μL/L Syngas#1','Experiment 900μL/L Syngas#1',
+                    'Simulation 0μL/L Syngas#1','Experiment 0μL/L Syngas#1'],fontsize=self.lgdsize)
+        plt.savefig("DataAnalyse\\Fig\\syngasYang1.png",bbox_inches='tight')
+        data={}
+        with pd.ExcelFile(r"DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx") as xls:
+            data['exp_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[0,2])
+            data['smlt_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[3,5])
+            data['exp_2_300']=pd.read_excel(xls,'合成气2,300ppm',usecols=[0,2])
+            data['smlt_2_300']=pd.read_excel(xls,'合成气2,300ppm',usecols=[3,5])
+            data['exp_1_000'] = pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[0, 2])
+            data['smlt_1_000']=pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[3, 5])
+        
+        plt.figure()
+        symbol=iter(["*",'--','s',':','^',"-."])
+        for key in data:
+            plt.plot(data[key].iloc[:,0],data[key].iloc[:,1],next(symbol))
+        #plt.xlim((550,1100))
+        plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.legend(['Simulation 900μL/L Syngas#2','Experiment 900μL/L Syngas#2',
+                    'Simulation 300μL/L Syngas#2','Experiment 900μL/L Syngas#2',
+                    'Simulation 0μL/L Syngas#2','Experiment 0μL/L Syngas#2'],fontsize=self.lgdsize)
+        plt.savefig("DataAnalyse\\Fig\\syngasYang2.png",bbox_inches='tight')
 if __name__=='__main__':
     figPlotter=plotData('large')
-    
     
     
     figPlotter.verifyCaoQingXi()
@@ -802,6 +878,7 @@ if __name__=='__main__':
     figPlotter.H2_Fig()
     figPlotter.H2O_Fig()
     figPlotter.NO_NSR15_Fig()
+    figPlotter.NSR_Fig()
     figPlotter.O2_Fig()
     figPlotter.pressure_Fig()
     figPlotter.pressure_NO2_Fig()
@@ -817,6 +894,8 @@ if __name__=='__main__':
     figPlotter.temperatureInterval()
     figPlotter.Additive_Overall_Fig()
     figPlotter.AdditiveTemperatureShift()
+   
+    figPlotter.SynGasExp()
     
     
     
