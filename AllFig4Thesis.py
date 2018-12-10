@@ -59,7 +59,7 @@ class plotData:
             species=indicator.split(" ")[2]
             plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
             plt.ylabel("["+species+"](out)/[NO](in)",fontsize=self.axissize)            
-            plt.legend(['0ppm additive','300ppm additive#1','900ppm addtive #1','300ppm additive#2','900ppm additive#2'],fontsize=self.lgdsize)
+            plt.legend(['0μL/L additive','300μL/L additive#1','900μL/L addtive #1','300μL/L additive#2','900μL/L additive#2'],fontsize=self.lgdsize)
             plt.savefig("DataAnalyse\\Fig\\"+indicator.replace(" ","")+".png",bbox_inches='tight')   
             plt.close()
         draw_image(indicator='Mole fraction NO end point')
@@ -106,7 +106,7 @@ class plotData:
                     f=interp1d(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator],kind='slinear')
                     temperature_new=np.linspace(100,1240,num=90,endpoint=True)
                     plt.plot(temperature_new,f(temperature_new)/(200e-6),symbol[k%7]+'--',markersize=self.mkrSize-2)
-                    lgd.append('Addtive#'+str(i+1)+'='+"{:.4f}".format(h2/h2_percentage[i]))                    
+                    lgd.append('Addtive#'+str(i+1)+':'+"{:.0f}μL/L".format(h2/h2_percentage[i]*1e6))                    
                 plt.legend(lgd,fontsize=self.lgdsize)
                 plt.savefig("DataAnalyse\\Fig\\"+ylbl.replace("/","")+".png",bbox_inches='tight')
         df2=pd.read_csv(r'DataAnalyse\CSV_4_SNCR\NSR_New__ADD_ITL.csv',header=0)
@@ -128,7 +128,7 @@ class plotData:
                 f=interp1d(dataSet['Temperature C1 PFR PFR (C1)_(C)'],dataSet[indicator],kind='cubic')
                 temperature_new=np.linspace(550,1250,num=90,endpoint=True)
                 plt.plot(temperature_new,f(temperature_new)/(200e-6),symbol[l%6]+'--',markersize=self.mkrSize-2)
-                lgd.append('NSR='+"{:.1f}".format(j*0.00012/0.0002)+":"+"NH3="+str(j*0.00012))                
+                lgd.append('NSR='+"{:.1f}".format(j*0.00012/0.0002)+":"+"NH3:"+str(j*0.00012*1e6)+"μL/L")                
             plt.legend(lgd,fontsize=self.axissize)
             plt.savefig("DataAnalyse\\Fig\\"+ylbl.replace("/","_")+".png",bbox_inches='tight')
             plt.close()
@@ -621,7 +621,7 @@ class plotData:
                 
             # plt.hold(True)
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
-        plt.ylabel('[NO2](out)/[NO2](in)',fontsize=self.axissize)
+        plt.ylabel('[NO2](out)/[NO](in)',fontsize=self.axissize)
         plt.legend(handles=dataPoint,fontsize=self.lgdsize)
         #plt.show()
         plt.savefig("DataAnalyse\\Fig\\pressureNO2.png",bbox_inches='tight') 
@@ -804,8 +804,8 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation 600μL/L Syngas#1','Simulation 600μL/L Syngas#1',
-                    'Experiment CO:H2=1:1','Experiment H2:CH4=1:1','Experiment H2:CH4=3:1'],fontsize=self.lgdsize)
+        plt.legend(['Simulation Syngas#1 600μL/L','Simulation Syngas#1 1200μL/L',
+                    'Experiment CO 300μL/L H2 300μL/L','Experiment H2 300μL/L CH4 300μL/L','Experiment H2 900μL/L CH4 300μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasQing1.png",bbox_inches='tight')
         plt.figure()
         data={}
@@ -821,8 +821,8 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation 600μL/L Syngas#2','Simulation 600μL/L Syngas#2',
-                    'Experiment CO:H2=1:1','Experiment CO:H2=3:1'],fontsize=self.lgdsize)
+        plt.legend(['Simulation Syngas#2 600μL/L','Simulation Syngas#2 1200μL/L',
+                    'Experiment CO 300μL/L H2 300μL/L','Experiment CO 900μL/L H2 300μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasQing2.png",bbox_inches='tight')
 
         plt.figure()
@@ -842,9 +842,9 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation 900μL/L Syngas#1','Experiment 900μL/L Syngas#1',
-                    'Simulation 300μL/L Syngas#1','Experiment 900μL/L Syngas#1',
-                    'Simulation 0μL/L Syngas#1','Experiment 0μL/L Syngas#1'],fontsize=self.lgdsize)
+        plt.legend(['Simulation Syngas#1 900μL/L','Experiment Syngas#1 900μL/L',
+                    'Simulation Syngas#1 300μL/L','Experiment Syngas#1 300μL/L',
+                    'Simulation Syngas#1 0μL/L','Experiment Syngas#1 0μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasYang1.png",bbox_inches='tight')
         data={}
         with pd.ExcelFile(r"DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx") as xls:
@@ -862,14 +862,32 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation 900μL/L Syngas#2','Experiment 900μL/L Syngas#2',
-                    'Simulation 300μL/L Syngas#2','Experiment 900μL/L Syngas#2',
-                    'Simulation 0μL/L Syngas#2','Experiment 0μL/L Syngas#2'],fontsize=self.lgdsize)
+        plt.legend(['Simulation Syngas#2 900μL/L','Experiment Syngas#2 900μL/L',
+                    'Simulation Syngas#2 300μL/L','Experiment Syngas#2 300μL/L',
+                    'Simulation Syngas#2 0μL/L','Experiment Syngas#2 0μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasYang2.png",bbox_inches='tight')
+    def NSRRensidenceTimeExp(self):
+        def myplot(name,maxData):
+            
+            xls_file=pd.read_csv(r'DataAnalyse\\DataNSRResTime\\'+name+r'Exp.csv',header=0)
+            plt.plot(xls_file.x,xls_file.Curve1/maxData,'s')
+            xls_file=pd.read_csv(r'DataAnalyse\\DataNSRResTime\\'+name+r'Simulation.csv',header=0)
+            plt.plot(xls_file.x,xls_file.Curve1/maxData,'--')
+            plt.legend(["Experiment Data","Simulation Curve"],fontsize=self.lgdsize)
+        plt.figure()    
+        myplot("NSR",268)
+        plt.xlabel("NSR")
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.savefig("DataAnalyse\\Fig\\NSRExp.png",bbox_inches='tight')
+        plt.figure()  
+        myplot("residenceTime",100)
+        plt.xlabel("Residence Time(s)")
+        plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+        plt.savefig("DataAnalyse\\Fig\\residenceTimeExp.png",bbox_inches='tight')      
 if __name__=='__main__':
     figPlotter=plotData('large')
     
-    
+ 
     figPlotter.verifyCaoQingXi()
     
     
@@ -896,6 +914,9 @@ if __name__=='__main__':
     figPlotter.AdditiveTemperatureShift()
    
     figPlotter.SynGasExp()
+ 
+    figPlotter.NSRRensidenceTimeExp()
+    
     
     
     
