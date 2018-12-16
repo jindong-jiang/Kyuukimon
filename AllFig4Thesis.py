@@ -804,7 +804,7 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation Syngas#1 600μL/L','Simulation Syngas#1 1200μL/L',
+        plt.legend(['Simulation additive#1 600μL/L','Simulation additive#1 1200μL/L',
                     'Experiment CO 300μL/L H2 300μL/L','Experiment H2 300μL/L CH4 300μL/L','Experiment H2 900μL/L CH4 300μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasQing1.png",bbox_inches='tight')
         plt.figure()
@@ -821,7 +821,7 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation Syngas#2 600μL/L','Simulation Syngas#2 1200μL/L',
+        plt.legend(['Simulation additive#2 600μL/L','Simulation additive#2 1200μL/L',
                     'Experiment CO 300μL/L H2 300μL/L','Experiment CO 900μL/L H2 300μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasQing2.png",bbox_inches='tight')
 
@@ -842,9 +842,9 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation Syngas#1 900μL/L','Experiment Syngas#1 900μL/L',
-                    'Simulation Syngas#1 300μL/L','Experiment Syngas#1 300μL/L',
-                    'Simulation Syngas#1 0μL/L','Experiment Syngas#1 0μL/L'],fontsize=self.lgdsize)
+        plt.legend(['Simulation additive#1 900μL/L','Experiment additive#1 900μL/L',
+                    'Simulation additive#1 300μL/L','Experiment additive#1 300μL/L',
+                    'Simulation additive#1 0μL/L','Experiment additive#1 0μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasYang1.png",bbox_inches='tight')
         data={}
         with pd.ExcelFile(r"DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx") as xls:
@@ -862,9 +862,9 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation Syngas#2 900μL/L','Experiment Syngas#2 900μL/L',
-                    'Simulation Syngas#2 300μL/L','Experiment Syngas#2 300μL/L',
-                    'Simulation Syngas#2 0μL/L','Experiment Syngas#2 0μL/L'],fontsize=self.lgdsize)
+        plt.legend(['Simulation additive#2 900μL/L','Experiment additive#2 900μL/L',
+                    'Simulation additive#2 300μL/L','Experiment additive#2 300μL/L',
+                    'Simulation additive#2 0μL/L',  'Experiment additive#2 0μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasYang2.png",bbox_inches='tight')
     def NSRRensidenceTimeExp(self):
         def myplot(name,maxData):

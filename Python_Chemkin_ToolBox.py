@@ -2,7 +2,11 @@ import numpy
 import pandas as pd
 import os
 
-ChemkinDiretory=r"C:\Program Files\Reaction\chemkin15083_pc"
+# To test if the system is x86 or x64
+if  'PROGRAMFILES(X86)' in os.environ:
+    ChemkinDiretory=r"C:\Program Files (x86)\Reaction\chemkin15083_pc"
+else:
+    ChemkinDiretory=r"C:\Program Files\Reaction\chemkin15083_pc"
 
 def gererateInputFile( reactants, temperature, pressure,velocity,viscosity,
                       reactorDiameter,endPosition,startPosition ,endTime,tempFile,
