@@ -108,6 +108,9 @@ class plotData:
                     plt.plot(temperature_new,f(temperature_new)/(200e-6),symbol[k%7]+'--',markersize=self.mkrSize-2)
                     lgd.append('Addtive#'+str(i+1)+':'+"{:.0f}μL/L".format(h2/h2_percentage[i]*1e6))                    
                 plt.legend(lgd,fontsize=self.lgdsize)
+                if indicator=='Mole_Fraction_NOx':
+                    plt.ylim(ymin=0.95)
+                #plt.yticks(range(0,1.1,0.2))
                 plt.savefig("DataAnalyse\\Fig\\"+ylbl.replace("/","")+".png",bbox_inches='tight')
         df2=pd.read_csv(r'DataAnalyse\CSV_4_SNCR\NSR_New__ADD_ITL.csv',header=0)
         df2['Mole Fraction NOx']=df2['Mole fraction NO2 end point']+df2['Mole fraction NO end point']+df2['Mole fraction N2O end point']
@@ -130,6 +133,7 @@ class plotData:
                 plt.plot(temperature_new,f(temperature_new)/(200e-6),symbol[l%6]+'--',markersize=self.mkrSize-2)
                 lgd.append('NSR='+"{:.1f}".format(j*0.00012/0.0002)+":"+"NH3:"+str(j*0.00012*1e6)+"μL/L")                
             plt.legend(lgd,fontsize=self.axissize)
+            
             plt.savefig("DataAnalyse\\Fig\\"+ylbl.replace("/","_")+".png",bbox_inches='tight')
             plt.close()
     def Additive_NSR_different(self):
@@ -828,8 +832,8 @@ class plotData:
         plt.figure()
         data={}
         with pd.ExcelFile(r'DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx') as xls:
-            data['exp_1_900'] = pd.read_excel(xls, '合成气1,900ppm ',usecols=[0, 2])
-            data['smlt_1_900']=pd.read_excel(xls, '合成气1,900ppm ',usecols=[3, 5])
+            #data['exp_1_900'] = pd.read_excel(xls, '合成气1,900ppm ',usecols=[0, 2])
+            #data['smlt_1_900']=pd.read_excel(xls, '合成气1,900ppm ',usecols=[3, 5])
             data['exp_1_300'] = pd.read_excel(xls, '合成气1,300ppm',usecols=[0, 2])
             data['smlt_1_300']=pd.read_excel(xls, '合成气1,300ppm',usecols=[4, 6])
             data['exp_1_000'] = pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[0, 2])
@@ -842,14 +846,14 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation additive#1 900μL/L','Experiment additive#1 900μL/L',
-                    'Simulation additive#1 300μL/L','Experiment additive#1 300μL/L',
+        #'Simulation additive#1 900μL/L','Experiment additive#1 900μL/L',
+        plt.legend(['Simulation additive#1 300μL/L','Experiment additive#1 300μL/L',
                     'Simulation additive#1 0μL/L','Experiment additive#1 0μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasYang1.png",bbox_inches='tight')
         data={}
         with pd.ExcelFile(r"DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx") as xls:
-            data['exp_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[0,2])
-            data['smlt_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[3,5])
+            #data['exp_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[0,2])
+            #data['smlt_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[3,5])
             data['exp_2_300']=pd.read_excel(xls,'合成气2,300ppm',usecols=[0,2])
             data['smlt_2_300']=pd.read_excel(xls,'合成气2,300ppm',usecols=[3,5])
             data['exp_1_000'] = pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[0, 2])
@@ -862,8 +866,8 @@ class plotData:
         #plt.xlim((550,1100))
         plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
-        plt.legend(['Simulation additive#2 900μL/L','Experiment additive#2 900μL/L',
-                    'Simulation additive#2 300μL/L','Experiment additive#2 300μL/L',
+        #'Simulation additive#2 900μL/L','Experiment additive#2 900μL/L',
+        plt.legend(['Simulation additive#2 300μL/L','Experiment additive#2 300μL/L',
                     'Simulation additive#2 0μL/L',  'Experiment additive#2 0μL/L'],fontsize=self.lgdsize)
         plt.savefig("DataAnalyse\\Fig\\syngasYang2.png",bbox_inches='tight')
     def NSRRensidenceTimeExp(self):
