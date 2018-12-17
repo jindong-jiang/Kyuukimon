@@ -884,6 +884,65 @@ class plotData:
         plt.xlabel("Residence Time(s)")
         plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
         plt.savefig("DataAnalyse\\Fig\\residenceTimeExp.png",bbox_inches='tight')      
+    def YangMeiGasCorrection(self):
+        df=pd.read_csv("DataAnalyse\\YangmeiGas\\simulationData1.csv")        
+        NO_EndPoint_Detail_Temp_Np=df['NO_Detail'].values
+        temperatureListX=df['temperature'].dropna()
+        plt.figure()
+        C_NO_Detail=NO_EndPoint_Detail_Temp_Np.reshape(-1,len(temperatureListX))
+        symbol3=iter(['--',':','-.'])
+        for dataLine in C_NO_Detail:        
+            plt.plot(temperatureListX-273.15,dataLine,next(symbol3))
+        data={}
+        with pd.ExcelFile(r'DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx') as xls:
+            data['exp_1_000'] = pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[0, 2])
+            data['exp_1_300'] = pd.read_excel(xls, '合成气1,300ppm',usecols=[0, 2])
+            data['exp_1_900'] = pd.read_excel(xls, '合成气1,900ppm ',usecols=[0, 2])
+            #data['smlt_1_900']=pd.read_excel(xls, '合成气1,900ppm ',usecols=[3, 5])
+            
+            #data['smlt_1_300']=pd.read_excel(xls, '合成气1,300ppm',usecols=[4, 6])
+            
+            #data['smlt_1_000']=pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[3, 5])           
+            symbol=iter(['s','^','*'])
+            for datatoplot in data:
+                plt.plot(data[datatoplot].iloc[:,0],data[datatoplot].iloc[:,1],next(symbol))
+            #plt.xlim((550,1100))
+            plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+            plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+            plt.legend(['Simulation additive#1 0μL/L','Simulation additive#1 300μL/L','Simulation additive#1 900μL/L',
+                        'Experiment additive#1 0μL/L','Experiment additive#1 300μL/L','Experiment additive#1 900μL/L'],
+                        fontsize=self.lgdsize)
+            plt.savefig("DataAnalyse\\Fig\\syngasYang1c.png",bbox_inches='tight')
+
+        df=pd.read_csv("DataAnalyse\\YangmeiGas\\simulationData2.csv")        
+        NO_EndPoint_Detail_Temp_Np=df['NO_Detail'].values
+        temperatureListX=df['temperature'].dropna()
+        plt.figure()
+        C_NO_Detail=NO_EndPoint_Detail_Temp_Np.reshape(-1,len(temperatureListX))
+        symbol3=iter(['--',':','-.'])
+        for dataLine in C_NO_Detail:        
+            plt.plot(temperatureListX-273.15,dataLine,next(symbol3),)
+        data={}
+        with pd.ExcelFile(r"DataAnalyse\Additive\data1ResultSynGasSNCR1.xlsx") as xls:
+            data['exp_1_000'] = pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[0, 2])
+            # data['smlt_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[3,5])
+            data['exp_2_300']=pd.read_excel(xls,'合成气2,300ppm',usecols=[0,2])
+            #data['smlt_2_300']=pd.read_excel(xls,'合成气2,300ppm',usecols=[3,5])            
+            #data['smlt_1_000']=pd.read_excel(xls, 'NSR1.5,t0.6s',usecols=[3, 5])  
+            data['exp_2_900']=pd.read_excel(xls,'合成气2,900ppm',usecols=[0,2])  
+            symbol=iter(["*",'s','^'])
+            for key in data:
+                plt.plot(data[key].iloc[:,0],data[key].iloc[:,1],next(symbol))
+            #plt.xlim((550,1100))
+            plt.xlabel('Temperature ($^\circ$C)',fontsize=self.axissize)
+            plt.ylabel('[NO](out)/[NO](in)',fontsize=self.axissize)
+            plt.legend(['Simulation additive#2 0μL/L','Simulation additive#2 300μL/L','Simulation additive#2 900μL/L',
+                        'Experiment additive#2 0μL/L','Experiment additive#2 300μL/L','Experiment additive#2 900μL/L'],fontsize=self.lgdsize)
+            plt.savefig("DataAnalyse\\Fig\\syngasYang2c.png",bbox_inches='tight')   
+
+
+
+
 if __name__=='__main__':
     figPlotter=plotData('large')
     
@@ -916,6 +975,7 @@ if __name__=='__main__':
     figPlotter.SynGasExp()
  
     figPlotter.NSRRensidenceTimeExp()
+    figPlotter.YangMeiGasCorrection()
     
     
     
