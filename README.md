@@ -23,7 +23,7 @@ temperature window with the presence of additives.
 (1)This program is depvolopped based on the software Chemkin-Pro, so the user has to install Chemkin-Pro in his or her Windows machine with default installation path of Chemkin. 
 (2)Download the program and run ChemkinGA.py to calculate the Arrhenius coefficients for a temperature interval. You can also run ChemkinGAInLoop.py to calculate the coefficients of specific temperature.
 
-6.Usage
+4.Usage
 ===
 The user can get the interface of Chemkin-Python with the file Python_Chemkin_ToolBox.py, to construct his or her own evalution function
 , the user can check the evaluationFunction.py. The ChemkinGA.py is for the optimasation with genetic algorithm.
@@ -34,10 +34,11 @@ The user can get the interface of Chemkin-Python with the file Python_Chemkin_To
 Here are some results of the overall reactions represented in 3D which compare the overall reaction and detailed caculation of the concetration of NO and NH3. 
 ![Result of NH3](https://github.com/kyle662606957/Kyuukimon/blob/master/ImageResult/NH3_3d_1100K_1200K.png)
 ![Result of NO](https://github.com/kyle662606957/Kyuukimon/blob/master/ImageResult/NO_Tranparent_3d_1400K.png)
-!For more results, the user can go to https://github.com/kyle662606957/Kyuukimon/tree/master/ImageResult
+
+For more results, the user can go to https://github.com/kyle662606957/Kyuukimon/tree/master/ImageResult
 
 6.Feedback
 ===
-If you have any comments or questions, feel free to contact me:jiangjindong@hotmail.com
+If you have any comments or questions, feel free to contact me:jiangjindongkyle@gmail.com
 
 
