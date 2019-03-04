@@ -14,6 +14,6 @@ after 0.3s. The overall reaction coefficients of SNCR reaction in an interval of
 of the coefficients is calculated for different additives, so that the overall reaction can predict the left shift of the SNCR reaction
 temperature window with the presence of additives.
 
-2.SOFTWARE ARCHITECTURE
+2.ARCHITECTURE
 ===
-
+![Architecture of the algorithm](https://github.com/kyle662606957/Kyuukimon/blob/master/imageForReadme/softwarestructure.PNG)
