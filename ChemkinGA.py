@@ -19,31 +19,31 @@ import evaluationFunction as evltFun
 
 CXPB, MUTPB,INDPB,PRCENTSEL, POP_SIZE,NGEN = 0.5, 0.8, 0.4,0.3,80,200
 
-def atribute_initiale(PMin,Pmax):
-    a=random.uniform(0,10)
+def atribute_initiale(PMin,Pmax,AMin=0,AMax=10):
+    a=random.uniform(AMin,AMax)
     b=random.uniform(PMin,Pmax)
     return a*10**b
 
 LimitMinAi,LimitMaxAi=0,50
 LimitMinBetai,LimitMaxBetai=0,0
-LimitMinEi,LimitMaxEi=0,10
+LimitMinEi,LimitMaxEi=4,5
 toolbox = base.Toolbox()
 toolbox.register("attribute_Ai",atribute_initiale,LimitMinAi,LimitMaxAi)
 toolbox.register("attribute_Betai",atribute_initiale,LimitMinBetai,LimitMaxBetai)
-toolbox.register("attribute_Ei",atribute_initiale,LimitMinEi,LimitMaxEi)
+toolbox.register("attribute_Ei",atribute_initiale,LimitMinEi,LimitMaxEi,2.4,2.5)
 toolbox.register("individual", tools.initCycle, creator.Individual,
                  (toolbox.attribute_Ai,toolbox.attribute_Betai,toolbox.attribute_Ei), n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-listTemperature=np.linspace(1100,1500,8)
+listTemperature=np.linspace(1100,1200,8)
 calculatorTemp=evltFun.temperatureListDiffCalculator(listTemperature)
 
 def evaluate(individual):
     # individual[0]:learnning rate;individual[1] numbers of perceptron
 
     if LimitMinAi<individual[0]<=10*10**LimitMaxAi and LimitMinBetai<individual[1]<=10*10**LimitMaxBetai and \
-            LimitMinEi<individual[2]<=10*10**LimitMaxEi and LimitMinAi<individual[3]<=10*10**LimitMaxAi and \
-            LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and LimitMinEi<individual[5]<=10*10**LimitMaxEi:
+            2.4*10**LimitMinEi<individual[2]<=2.5*10**LimitMaxEi and LimitMinAi<individual[3]<=10*10**LimitMaxAi and \
+            LimitMinBetai<individual[4]<=10*10**LimitMaxBetai and 2.4*10**LimitMinEi<individual[5]<=2.5*10**LimitMaxEi:
         #notes=((individual[0]-5*10**5)/(5*10**5))**2+((individual[1]-5)/5)**2+((individual[2]-5*10**5)/(5*10**5))**2+ \
          #    ((5*10**5-individual[3])/(5*10**5))**2+((individual[4]-4)/4)**2+((individual[5]-5*10**5)/(5*10**5))**2
         #notes=evltFun.difference_Overall_Detail(individual)
