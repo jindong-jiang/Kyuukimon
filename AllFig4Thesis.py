@@ -1004,7 +1004,7 @@ if __name__=='__main__':
 
     figPlotter.GA_Convergence_Fig()
     figPlotter.specificTemperatureFig()
-    figPlotter.temperatureInterval()
+    
     figPlotter.Additive_Overall_Fig()
     figPlotter.AdditiveTemperatureShift()
    
@@ -1012,8 +1012,10 @@ if __name__=='__main__':
  
     figPlotter.NSRRensidenceTimeExp()
     figPlotter.YangMeiGasCorrection()
-    '''
+    
     figPlotter.temperatureIntervalTestPaperCoef()
+    '''
+    figPlotter.temperatureInterval()
     
     
     

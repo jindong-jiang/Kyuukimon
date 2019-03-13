@@ -35,7 +35,7 @@ toolbox.register("individual", tools.initCycle, creator.Individual,
                  (toolbox.attribute_Ai,toolbox.attribute_Betai,toolbox.attribute_Ei), n=2)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-listTemperature=np.linspace(1200,1400,9)
+listTemperature=np.linspace(1200,1400,8)
 calculatorTemp=evltFun.temperatureListDiffCalculator(listTemperature)
 
 def evaluate(individual):

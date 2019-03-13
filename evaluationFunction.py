@@ -679,7 +679,8 @@ if __name__=='__main__':
     Coeficients=[[16084827.893287595,2.587810040194352,23799.73019602423,
             1.2551668605210685e+19,1.3311990757391372,91991.52518245796]]
     '''
-    Coeficients=[[3.141e8,5.3,79.56e3,2.357e5,7.41,117.84e3]]
+    Coeficients=[[1.3800302991034857e+22,3.0576367948802194,111255.8623096102,
+    2358883.2390608634,8.066708734179102,128007.53080755599]]
     calculatorTemperature=temperatureListDiffCalculator(listTemperature)
     for coeficient in Coeficients:
         result=calculatorTemperature.difference_Overall_Detail_temperature(coeficient,draw=True)
