@@ -20,7 +20,7 @@ temperature window with the presence of additives.
 
 3.How to run it
 ===
-(1)This program is depvolopped based on the software Chemkin-Pro, so the user has to install Chemkin-Pro in his or her Windows machine with default installation path of Chemkin. 
+(1)This program is depvolopped based on the software Chemkin-Pro, so the user has to install Chemkin-Pro(CHEMKIN-PRO Release 15083) in his or her Windows machine with default installation path of Chemkin. 
 
 (2)Download the program and run ChemkinGA.py to calculate the Arrhenius coefficients for a temperature interval. You can also run ChemkinGAInLoop.py to calculate the coefficients of specific temperature.
 
